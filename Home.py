@@ -1,69 +1,106 @@
 # Libraries
 import streamlit as st
 from PIL import Image
+import pandas as pd
+import datetime
+import requests
+from plotly import graph_objects as go
+from utils import bargraph, linegraph
 
 # Confit
-st.set_page_config(page_title='AQI Weather Forecaster', page_icon=':bar_chart:', layout='wide')
+st.set_page_config(page_title='AQI Weather Forecaster',
+                   page_icon=':bar_chart:', layout='wide', initial_sidebar_state='collapsed')
 
-# Title
-st.title('Cross Chain Monitoring Tool')
+city = st.selectbox("SELECT ANY ONE OF THE CITY ", ("Adilabad",
+                    "Nizamabad", "Khammam", "Warangal", "Karimnagar"))
 
-# Content
-c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14 = st.columns(14)
-c1.image(Image.open('images/ethereum-logo.png'))
+graph = "Bar Graph"
+temp_unit = " °C"
+wind_unit = " km/h"
 
-st.write(
-    """
-    The crypto industry continues to progress and its development has never stopped. Contributors
-    of each blockchain keep developing each segment of the industry and the whole crypto ecosystem.
-    This tool is designed to allow viewers to journey into the world of crypto ecosystems of some
-    of the major blockchains, and compare their performance.
 
-    This tool is designed and structured in multiple **Pages** that are accessible using the sidebar.
-    Each of these Pages addresses a different segment of the crypto industry. Within each segment
-    (Macro, Transfers, Swaps, NFTs, etc.) you are able to filter your desired blockchains to
-    narrow/expand the comparison. By selecting a single blockchain, you can observe a deep dive
-    into that particular network.
+api = "9b833c0ea6426b70902aa7a4b1da285c"
+url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api}"
+response = requests.get(url)
+x = response.json()
 
-    All values for amounts, prices, and volumes are in **U.S. dollars** and the time frequency of the
-    analysis was limited to the last **30 days**.
-    """
-)
 
-st.subheader('Methodology')
-st.write(
-    """
-    The data for this cross-chain comparison were selected from the [**Flipside Crypto**](https://flipsidecrypto.xyz)
-    data platform by using its **REST API**. These queries are currently set to **re-run every 24 hours** to cover the latest
-    data and are imported as a JSON file directly to each page. The data were selected with a **1 day delay** for all
-    blockchains to be in sync with one another. The codes for this tool are saved and accessible in its 
-    [**GitHub Repository**](https://github.com/alitaslimi/cross-chain-monitoring).
+try:
+    lon = x["coord"]["lon"]
+    lat = x["coord"]["lat"]
+    ex = "current,minutely,hourly"
+    url2 = f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={ex}&appid={api}'
+    res = requests.get(url2)
+    y = res.json()
 
-    It is worth mentioning that a considerable portion of the data used for this tool was manually decoded from the raw
-    transaction data on some of the blockchains. Besides that, the names of addresses, DEXs, collections, etc. are also
-    manually labeled. As the queries are updated on a daily basis to cover the most recent data, there is a chance
-    that viewers encounter inconsistent data through the app. Due to the heavy computational power required to execute
-    the queries, and also the size of the raw data being too large, it was not feasible to cover data for a longer period,
-    or by downloading the data and loading it from the repository itself. Therefore, the REST API was selected as the
-    proper form of loading data for the time being.
-    """
-)
+    maxtemp = []
+    mintemp = []
+    pres = []
+    humd = []
+    wspeed = []
+    desc = []
+    cloud = []
+    rain = []
+    dates = []
+    sunrise = []
+    sunset = []
+    cel = 273.15
 
-st.subheader('Future Works')
-st.write(
-    """
-    This tool is a work in progress and will continue to be developed moving forward. Adding other blockchains,
-    more KPIs and metrics, optimizing the code in general, enhancing the UI/UX of the tool, and more importantly,
-    improving the data pipeline by utilizing [**Flipside ShroomDK**](https://sdk.flipsidecrypto.xyz/shroomdk) are
-    among the top priorities for the development of this app. Feel free to share your feedback, suggestions, and
-    also critics with me.
-    """
-)
+    for item in y["daily"]:
+        maxtemp.append(round(item["temp"]["max"]-cel, 2))
+        mintemp.append(round(item["temp"]["min"]-cel, 2))
+        wspeed.append(str(round(item["wind_speed"]*3.6, 1))+wind_unit)
 
-c1, c2, c3 = st.columns(3)
-with c1:
-    st.info('**Data Analyst: [@AliTslm](https://twitter.com/AliTslm)**', icon="💡")
-with c2:
-    st.info('**GitHub: [@alitaslimi](https://github.com/alitaslimi)**', icon="💻")
-with c3:
-    st.info('**Data: [Flipside Crypto](https://flipsidecrypto.xyz)**', icon="🧠")
+        pres.append(item["pressure"])
+        humd.append(str(item["humidity"])+' %')
+
+        cloud.append(str(item["clouds"])+' %')
+        rain.append(str(int(item["pop"]*100))+'%')
+
+        desc.append(item["weather"][0]["description"].title())
+
+        d1 = datetime.date.fromtimestamp(item["dt"])
+        dates.append(d1.strftime('%d %b'))
+
+        sunrise.append(datetime.datetime.utcfromtimestamp(
+            item["sunrise"]).strftime('%H:%M'))
+        sunset.append(datetime.datetime.utcfromtimestamp(
+            item["sunset"]).strftime('%H:%M'))
+
+    icon = x["weather"][0]["icon"]
+    current_weather = x["weather"][0]["description"].title()
+
+    temp = str(round(x["main"]["temp"]-cel, 2))
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("## Current Temperature ")
+    with col2:
+        st.image(
+            f"http://openweathermap.org/img/wn/{icon}@2x.png", width=70)
+
+    col1, col2 = st.columns(2)
+    col1.metric("TEMPERATURE", temp+temp_unit)
+    col2.metric("WEATHER", current_weather)
+
+    tab1, tab2 = st.tabs(["Bar Graph", "Line Graph"])
+
+    with tab1:
+        st.plotly_chart(bargraph(dates, maxtemp, "Maximum", "Dates",
+                        "Temperature", mintemp, "Mininum"), use_container_width=True)
+
+    with tab2:
+        st.plotly_chart(linegraph(dates, maxtemp, "Maximum", "Dates",
+                        "Temperature", mintemp, "Mininum"), use_container_width=True)
+
+    df = pd.DataFrame({'DATES': dates,
+                       'MAX TEMP '+temp_unit: maxtemp,
+                       'MIN TEMP'+temp_unit: mintemp,
+                       'HUMIDITY': humd,
+                       'WEATHER CONDITION': desc,
+                       'WIND SPEED': wspeed,
+                       })
+    st.table(df)
+
+except Exception as e:
+    st.error("Error message "+e)
