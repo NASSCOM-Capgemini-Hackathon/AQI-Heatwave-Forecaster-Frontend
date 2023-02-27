@@ -50,6 +50,20 @@ def display_daily(city):
     data1=json.loads(r1.text)
     # Convert the response to a pandas DataFrame
     df_hist=json_normalize(data1)
+    
+
+    
+
+    # Convert the datetime string to a datetime object
+    df_hist['DATE'] = pd.to_datetime(df_hist['DATE'])
+
+    # Format the datetime object as "YYYY-MM-DD" and store it in a new column
+    df_hist['DATE'] = df_hist['DATE'].dt.strftime('%Y-%m-%d')
+
+    # Drop the original datetime string and datetime columns
+  
+     # Display the resulting DataFrame
+
     df_hist['AQI']=np.round(df_hist['AQI'])
 
     r2 = requests.post(future_url, json=payload)
@@ -60,12 +74,12 @@ def display_daily(city):
 
     with st.container():
         #st.title('CURRENT AIR QUALITY')
-        st.markdown("<h2 style='font-family:Times New Roman'><b>CURRENT AIR QUALITY INDEX</b></h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='font-family:Verdana'><b>CURRENT AIR QUALITY INDEX</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
         col1, col2,col3 = st.columns(3)
         
         today_date=str(date.today())
-        st.write(today_date)
+    
    
         today_aqi= df_hist.loc[df_hist['DATE'] == today_date, 'AQI'].values[0]
         with col1:
@@ -82,7 +96,7 @@ def display_daily(city):
                 )
         
         text=get_aqi_message(today_aqi)
-        st.markdown(f"<h3 style='font-family:Times New Roman'>{text}</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='font-family:Verdana'>{text}</h3>", unsafe_allow_html=True)
 
         #st.write(hasClicked)
     
@@ -90,7 +104,7 @@ def display_daily(city):
     st.write('')
     with st.container():
         
-        st.markdown("<h2 style='font-family:Times New Roman'><b>DAILY AIR QUALITY INDEX FORECAST</b></h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='font-family:Verdana'><b>DAILY AIR QUALITY INDEX FORECAST</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
         
         fig = go.Figure(data=go.Bar(x=df_fut['Date'], y=df_fut['Predictions']))
@@ -122,8 +136,12 @@ def display_monthly(city):
     data1=json.loads(r1.text)
     # Convert the response to a pandas DataFrame
     df_hist=json_normalize(data1)
-    df_hist['AQI']=np.round(df_hist['AQI'])
+    df_hist['DATE'] = pd.to_datetime(df_hist['DATE'])
 
+    # Format the datetime object as "YYYY-MM-DD" and store it in a new column
+    df_hist['DATE'] = df_hist['DATE'].dt.strftime('%Y-%m-%d')
+    df_hist['AQI']=np.round(df_hist['AQI'])
+   
     r2 = requests.post(future_url, json=payload)
     data2=json.loads(r2.text)
     # Convert the response to a pandas DataFrame
@@ -132,17 +150,17 @@ def display_monthly(city):
     
 
     with st.container():
-        st.markdown("<h2 style='font-family:Times New Roman'><b>CURRENT AIR QUALITY INDEX</b></h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='font-family:Verdana'><b>CURRENT AIR QUALITY INDEX</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
         col1, col2,col3 = st.columns(3)
         
         today_date=date.today()
         res = today_date.replace(day=1)
-        st.write(res)
-        today_aqi= df_hist.loc[df_hist['DATE'] == res, 'AQI'].values[0]
+        
+        today_aqi= df_hist.loc[df_hist['DATE'] == str(res), 'AQI'].values[0]
         with col1:
-            st.header("**TODAY**")
-            st.text(today_date)
+            st.header("**THIS MONTH**")
+            st.text(res)
         with col2:
             
 
@@ -154,14 +172,14 @@ def display_monthly(city):
                 )
         
         text=get_aqi_message(today_aqi)
-        st.markdown(f"<h3 style='font-family:Times New Roman'>{text}</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='font-family:Verdana'>{text}</h3>", unsafe_allow_html=True)
 
         #st.write(hasClicked)
     
     st.write('')
     st.write('')
     with st.container():
-        st.markdown("<h2 style='font-family:Times New Roman'><b>MONTHLY AIR QUALITY INDEX FORECAST</b></h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='font-family:Verdana'><b>MONTHLY AIR QUALITY INDEX FORECAST</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
         
         fig = go.Figure(data=go.Bar(x=df_fut['Date'], y=df_fut['Predictions']))
@@ -181,7 +199,7 @@ st.text("")
 st.text("")
 # Title
 
-st.markdown("<h1 style='text-align: center; color: #D81F26; font-family:Times New Roman'><b>🏭 AIR QUALITY INDEX</b></h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #D81F26; font-family:Verdana'><b>🏭 AIR QUALITY INDEX</b></h1>", unsafe_allow_html=True)
 st.text(" ")
 st.text(" ")
 # Style
