@@ -1,11 +1,6 @@
 # Libraries
 import streamlit as st
-from PIL import Image
-import pandas as pd
-import datetime
-import requests
-from plotly import graph_objects as go
-from utils import bargraph, linegraph
+from data import get_data
 
 # Confit
 st.set_page_config(page_title='AQI Weather Forecaster',
@@ -14,93 +9,86 @@ st.set_page_config(page_title='AQI Weather Forecaster',
 city = st.selectbox("SELECT ANY ONE OF THE CITY ", ("Adilabad",
                     "Nizamabad", "Khammam", "Warangal", "Karimnagar"))
 
-graph = "Bar Graph"
 temp_unit = " °C"
 wind_unit = " km/h"
 
+line_aqi_fig, line_weather_fig, temp, current_weather, icon, forecast_dates, aqi_forecast, weather_forecast, current_aqi = get_data(
+    "Get current data", city)
 
-api = "9b833c0ea6426b70902aa7a4b1da285c"
-url = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={api}"
-response = requests.get(url)
-x = response.json()
+st.markdown("___")
+st.markdown("# **:blue[Live Data]**")
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.metric("TEMPERATURE", temp+temp_unit)
+
+with col2:
+    st.metric("WEATHER", current_weather)
+
+with col3:
+    st.metric("AQI", current_aqi)
+
+st.markdown("___")
+st.markdown("# **:blue[Weekly Forecast Data]**")
+col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
+with col1:
+    st.header("{}".format(forecast_dates[0]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[0])+temp_unit, delta=round(weather_forecast[0]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[0], delta=round(
+        aqi_forecast[0]-float(current_aqi), 2))
+
+with col2:
+    st.header("{}".format(forecast_dates[1]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[1])+temp_unit, delta=round(weather_forecast[1]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[1], delta=round(
+        aqi_forecast[1]-float(current_aqi), 2))
+
+with col3:
+    st.header("{}".format(forecast_dates[2]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[2])+temp_unit, delta=round(weather_forecast[2]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[2], delta=round(
+        aqi_forecast[2]-float(current_aqi), 2))
+
+with col4:
+    st.header("{}".format(forecast_dates[3]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[3])+temp_unit, delta=round(weather_forecast[3]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[3], delta=round(
+        aqi_forecast[3]-float(current_aqi), 2))
 
 
-try:
-    lon = x["coord"]["lon"]
-    lat = x["coord"]["lat"]
-    ex = "current,minutely,hourly"
-    url2 = f'https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude={ex}&appid={api}'
-    res = requests.get(url2)
-    y = res.json()
+with col5:
+    st.header("{}".format(forecast_dates[4]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[4])+temp_unit, delta=round(weather_forecast[4]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[4], delta=round(
+        aqi_forecast[4]-float(current_aqi), 2))
 
-    maxtemp = []
-    mintemp = []
-    pres = []
-    humd = []
-    wspeed = []
-    desc = []
-    cloud = []
-    rain = []
-    dates = []
-    sunrise = []
-    sunset = []
-    cel = 273.15
 
-    for item in y["daily"]:
-        maxtemp.append(round(item["temp"]["max"]-cel, 2))
-        mintemp.append(round(item["temp"]["min"]-cel, 2))
-        wspeed.append(str(round(item["wind_speed"]*3.6, 1))+wind_unit)
+with col6:
+    st.header("{}".format(forecast_dates[5]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[5])+temp_unit, delta=round(weather_forecast[5]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[5], delta=round(
+        aqi_forecast[5]-float(current_aqi), 2))
 
-        pres.append(item["pressure"])
-        humd.append(str(item["humidity"])+' %')
 
-        cloud.append(str(item["clouds"])+' %')
-        rain.append(str(int(item["pop"]*100))+'%')
+with col7:
+    st.header("{}".format(forecast_dates[6]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[6])+temp_unit, delta=round(weather_forecast[6]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[6], delta=round(
+        aqi_forecast[6]-float(current_aqi), 2))
 
-        desc.append(item["weather"][0]["description"].title())
+st.markdown("___")
 
-        d1 = datetime.date.fromtimestamp(item["dt"])
-        dates.append(d1.strftime('%d %b'))
+st.markdown("# **:blue[Forecast Plots]**")
+tab1, tab2 = st.tabs(["AQI Line Graph", "Weather Line Graph"])
 
-        sunrise.append(datetime.datetime.utcfromtimestamp(
-            item["sunrise"]).strftime('%H:%M'))
-        sunset.append(datetime.datetime.utcfromtimestamp(
-            item["sunset"]).strftime('%H:%M'))
+with tab1:
+    st.plotly_chart(line_aqi_fig, use_container_width=True)
 
-    icon = x["weather"][0]["icon"]
-    current_weather = x["weather"][0]["description"].title()
-
-    temp = str(round(x["main"]["temp"]-cel, 2))
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write("## Current Temperature ")
-    with col2:
-        st.image(
-            f"http://openweathermap.org/img/wn/{icon}@2x.png", width=70)
-
-    col1, col2 = st.columns(2)
-    col1.metric("TEMPERATURE", temp+temp_unit)
-    col2.metric("WEATHER", current_weather)
-
-    tab1, tab2 = st.tabs(["Bar Graph", "Line Graph"])
-
-    with tab1:
-        st.plotly_chart(bargraph(dates, maxtemp, "Maximum", "Dates",
-                        "Temperature", mintemp, "Mininum"), use_container_width=True)
-
-    with tab2:
-        st.plotly_chart(linegraph(dates, maxtemp, "Maximum", "Dates",
-                        "Temperature", mintemp, "Mininum"), use_container_width=True)
-
-    df = pd.DataFrame({'DATES': dates,
-                       'MAX TEMP '+temp_unit: maxtemp,
-                       'MIN TEMP'+temp_unit: mintemp,
-                       'HUMIDITY': humd,
-                       'WEATHER CONDITION': desc,
-                       'WIND SPEED': wspeed,
-                       })
-    st.table(df)
-
-except Exception as e:
-    st.error("Error message "+e)
+with tab2:
+    st.plotly_chart(line_weather_fig, use_container_width=True)

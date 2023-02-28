@@ -7,15 +7,14 @@ import plotly.subplots as sp
 import requests
 import json
 import codecs
-from pandas import json_normalize
+from pandas import json_normalize 
 import numpy as np
 from streamlit_card import card
 from datetime import date
 
 
 # Global Variables
-theme_plotly = "streamlit"  # None or streamlit
-
+theme_plotly = "streamlit" # None or streamlit
 
 def get_aqi_message(aqi):
     if aqi <= 50:
@@ -30,174 +29,201 @@ def get_aqi_message(aqi):
         message = "Air quality is very unhealthy 😵. People with respiratory or heart disease, older adults, and children should avoid prolonged or heavy exertion."
     else:
         message = "Air quality is hazardous ☠️. Everyone should avoid outdoor activities."
-
+    
     return message
 
 
 def display_daily(city):
+    
 
-    # Define the API endpoint URL
-    history_url = "https://aqi-heatwave-app.azurewebsites.net/api/aqi/getHistoryDailyAQI"
+# Define the API endpoint URL
+    history_url="https://aqi-heatwave-app.azurewebsites.net/api/aqi/getHistoryDailyAQI"
     future_url = "https://aqi-heatwave-app.azurewebsites.net/api/aqi/getDailyAQIPredictions"
 
     # Define the request payload
     payload = {
-        "City": city
+        "City":city
     }
 
     # Send the POST request and store the response in a variable
     r1 = requests.post(history_url, json=payload)
-    data1 = json.loads(r1.text)
+    data1=json.loads(r1.text)
     # Convert the response to a pandas DataFrame
-    df_hist = json_normalize(data1)
-    df_hist['AQI'] = np.round(df_hist['AQI'])
+    df_hist=json_normalize(data1)
+    
+
+    
+
+    # Convert the datetime string to a datetime object
+    df_hist['DATE'] = pd.to_datetime(df_hist['DATE'])
+
+    # Format the datetime object as "YYYY-MM-DD" and store it in a new column
+    df_hist['DATE'] = df_hist['DATE'].dt.strftime('%Y-%m-%d')
+
+    # Drop the original datetime string and datetime columns
+  
+     # Display the resulting DataFrame
+
+    df_hist['AQI']=np.round(df_hist['AQI'])
 
     r2 = requests.post(future_url, json=payload)
-    data2 = json.loads(r2.text)
-    # Convert the response to a pandas DataFrame
-    df_fut = json_normalize(data2)
-    df_fut['Predictions'] = np.round(df_fut['Predictions'])
+    data2=json.loads(r2.text)
+    
+    df_fut=json_normalize(data2)
+    df_fut['Predictions']=np.round(df_fut['Predictions'])
 
     with st.container():
-        #st.title('CURRENT AIR QUALITY')
-        st.markdown(
-            "<h2 style='font-family:Times New Roman'><b>CURRENT AIR QUALITY INDEX</b></h2>", unsafe_allow_html=True)
+        
+        st.markdown("<h2 style='font-family:Verdana'><b>CURRENT AIR QUALITY INDEX</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
-        col1, col2, col3 = st.columns(3)
+        
+        
+        today_date=str(date.today())
+    
+   
+        today_aqi= df_hist.loc[df_hist['DATE'] == today_date, 'AQI'].values[0]
+        
+       
+        fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = today_aqi,
+        mode = "gauge+number",
+        title = {'text': "AQI"},
+        
+        gauge = {'axis': {'range': [None, 500]},
+                'steps' : [
+                    {'range': [0, 250], 'color': "lightgray"},
+                    {'range': [250, 400], 'color': "gray"}],
+                'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 490}}))
+        
+        st.plotly_chart(fig,use_container_width=True)
+            
+        text=get_aqi_message(today_aqi)
+        st.markdown(f"<h3 style='font-family:Verdana'>{text}</h3>", unsafe_allow_html=True)
 
-        today_date = str(date.today())
-        st.write(today_date)
-
-        today_aqi = df_hist.loc[df_hist['DATE'] == today_date, 'AQI'].values[0]
-        with col1:
-            st.header("**TODAY**")
-            st.text(today_date)
-        with col2:
-
-            card(
-                title="AQI",
-                text=today_aqi,
-                image='https://t3.ftcdn.net/jpg/01/70/53/70/240_F_170537095_942g7Zk2TcXplIdXpraxPN1C7YR8kDEk.jpg'
-
-            )
-
-        text = get_aqi_message(today_aqi)
-        st.markdown(
-            f"<h3 style='font-family:Times New Roman'>{text}</h3>", unsafe_allow_html=True)
-
-        # st.write(hasClicked)
-
+        
+    
     st.write('')
     st.write('')
     with st.container():
-
-        st.markdown(
-            "<h2 style='font-family:Times New Roman'><b>DAILY AIR QUALITY INDEX FORECAST</b></h2>", unsafe_allow_html=True)
+        
+        st.markdown("<h2 style='font-family:Verdana'><b>DAILY AIR QUALITY INDEX FORECAST</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
-
+        
         fig = go.Figure(data=go.Bar(x=df_fut['Date'], y=df_fut['Predictions']))
 
-        fig.update_layout(
+
+        fig.update_layout(     
             xaxis_title='Date',
             yaxis_title='AQI'
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig,use_container_width=True)
+
+       
 
 
 def display_monthly(city):
-    history_url = "https://aqi-heatwave-app.azurewebsites.net/api/aqi/getHistoryMonthlyAQI"
+    history_url="https://aqi-heatwave-app.azurewebsites.net/api/aqi/getHistoryMonthlyAQI"
     future_url = "https://aqi-heatwave-app.azurewebsites.net/api/aqi/getMonthlyAQIPredictions"
 
-    # Define the request payload
     payload = {
-        "City": city
+        "City":city
     }
 
-    # Send the POST request and store the response in a variable
+   
     r1 = requests.post(history_url, json=payload)
-    data1 = json.loads(r1.text)
-    # Convert the response to a pandas DataFrame
-    df_hist = json_normalize(data1)
-    df_hist['AQI'] = np.round(df_hist['AQI'])
+    data1=json.loads(r1.text)
+  
+    df_hist=json_normalize(data1)
+    df_hist['DATE'] = pd.to_datetime(df_hist['DATE'])
 
+    
+    df_hist['DATE'] = df_hist['DATE'].dt.strftime('%Y-%m-%d')
+    df_hist['AQI']=np.round(df_hist['AQI'])
+   
     r2 = requests.post(future_url, json=payload)
-    data2 = json.loads(r2.text)
-    # Convert the response to a pandas DataFrame
-    df_fut = json_normalize(data2)
-    df_fut['Predictions'] = np.round(df_fut['Predictions'])
+    data2=json.loads(r2.text)
+ 
+    df_fut=json_normalize(data2)
+    df_fut['Predictions']=np.round(df_fut['Predictions'])
+    
 
     with st.container():
-        st.markdown(
-            "<h2 style='font-family:Times New Roman'><b>CURRENT AIR QUALITY INDEX</b></h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='font-family:Verdana'><b>CURRENT AIR QUALITY INDEX</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
-        col1, col2, col3 = st.columns(3)
-
-        today_date = date.today()
+      
+        today_date=date.today()
         res = today_date.replace(day=1)
-        st.write(res)
-        today_aqi = df_hist.loc[df_hist['DATE'] == res, 'AQI'].values[0]
-        with col1:
-            st.header("**TODAY**")
-            st.text(today_date)
-        with col2:
+        
+        today_aqi= df_hist.loc[df_hist['DATE'] == str(res), 'AQI'].values[0]
 
-            card(
-                title="AQI",
-                text=today_aqi,
-                image='https://t3.ftcdn.net/jpg/01/70/53/70/240_F_170537095_942g7Zk2TcXplIdXpraxPN1C7YR8kDEk.jpg'
+        fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = today_aqi,
+        mode = "gauge+number",
+        title = {'text': "AQI"},
+        
+        gauge = {'axis': {'range': [None, 500]},
+                'steps' : [
+                    {'range': [0, 250], 'color': "lightgray"},
+                    {'range': [250, 400], 'color': "gray"}],
+                'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 490}}))
+        
+        st.plotly_chart(fig,use_container_width=True)
+       
 
-            )
 
-        text = get_aqi_message(today_aqi)
-        st.markdown(
-            f"<h3 style='font-family:Times New Roman'>{text}</h3>", unsafe_allow_html=True)
+        
+        text=get_aqi_message(today_aqi)
+        st.markdown(f"<h3 style='font-family:Verdana'>{text}</h3>", unsafe_allow_html=True)
 
-        # st.write(hasClicked)
-
+        #st.write(hasClicked)
+    
     st.write('')
     st.write('')
     with st.container():
-        st.markdown(
-            "<h2 style='font-family:Times New Roman'><b>MONTHLY AIR QUALITY INDEX FORECAST</b></h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='font-family:Verdana'><b>MONTHLY AIR QUALITY INDEX FORECAST</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
-
+        
+        
         fig = go.Figure(data=go.Bar(x=df_fut['Date'], y=df_fut['Predictions']))
+
 
         fig.update_layout(
             xaxis_title='Date',
             yaxis_title='AQI'
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig,use_container_width=True)
+
 
 
 # Config
-st.set_page_config(page_title='Air Quality Index',
-                   page_icon=':bar_chart:', layout='wide')
+st.set_page_config(page_title='Air Quality Index', page_icon=':bar_chart:', layout='wide')
 st.text("")
 st.text("")
 # Title
 
-st.markdown("<h1 style='text-align: center; color: #D81F26; font-family:Times New Roman'><b>🏭 AIR QUALITY INDEX</b></h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #D81F26; font-family:Verdana'><b>🏭 AIR QUALITY INDEX</b></h1>", unsafe_allow_html=True)
 st.text(" ")
 st.text(" ")
 # Style
 with open('style.css')as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
 
 # Data Sources
 
 # Filter
 options = st.sidebar.selectbox(
     "Select the Frequency for AQI",
-    ("Daily", "Monthly")
+    ("Daily","Monthly")
 )
-city_list = ['Adilabad', 'Warangal', 'Karimnagar', 'Khammam', 'Nizamabad']
+city_list=['Adilabad','Warangal','Karimnagar','Khammam','Nizamabad']
 city = st.sidebar.selectbox(
     "Select City",
     city_list
 )
 
-if options == 'Daily':
+if options=='Daily':
     display_daily(city)
 else:
     display_monthly(city)
