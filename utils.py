@@ -1,4 +1,19 @@
 from plotly import graph_objects as go
+import requests
+import json
+from pandas import json_normalize
+
+
+def get_request_data(url,cityname):
+    payload = {
+        "City":cityname
+    }
+
+    r1 = requests.post(url, json=payload)
+    data1=json.loads(r1.text)
+    df_fut=json_normalize(data1)
+    return df_fut
+    
 
 
 def bargraph(x_data, y_data1, y_data1_name, xaxis_title, yaxis_title, y_data2=None, y_data2_name=None):
