@@ -68,37 +68,40 @@ def display_daily(city):
 
     r2 = requests.post(future_url, json=payload)
     data2=json.loads(r2.text)
-    # Convert the response to a pandas DataFrame
+    
     df_fut=json_normalize(data2)
     df_fut['Predictions']=np.round(df_fut['Predictions'])
 
     with st.container():
-        #st.title('CURRENT AIR QUALITY')
+        
         st.markdown("<h2 style='font-family:Verdana'><b>CURRENT AIR QUALITY INDEX</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
-        col1, col2,col3 = st.columns(3)
+        
         
         today_date=str(date.today())
     
    
         today_aqi= df_hist.loc[df_hist['DATE'] == today_date, 'AQI'].values[0]
-        with col1:
-            st.header("**TODAY**")
-            st.text(today_date)
-        with col2:
-            
-
-            card(
-                 title="AQI",
-                 text=today_aqi,
-                 image='https://t3.ftcdn.net/jpg/01/70/53/70/240_F_170537095_942g7Zk2TcXplIdXpraxPN1C7YR8kDEk.jpg'
-                 
-                )
         
+       
+        fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = today_aqi,
+        mode = "gauge+number",
+        title = {'text': "AQI"},
+        
+        gauge = {'axis': {'range': [None, 500]},
+                'steps' : [
+                    {'range': [0, 250], 'color': "lightgray"},
+                    {'range': [250, 400], 'color': "gray"}],
+                'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 490}}))
+        
+        st.plotly_chart(fig,use_container_width=True)
+            
         text=get_aqi_message(today_aqi)
         st.markdown(f"<h3 style='font-family:Verdana'>{text}</h3>", unsafe_allow_html=True)
 
-        #st.write(hasClicked)
+        
     
     st.write('')
     st.write('')
@@ -119,32 +122,28 @@ def display_daily(city):
        
 
 
-    
-
-
 def display_monthly(city):
     history_url="https://aqi-heatwave-app.azurewebsites.net/api/aqi/getHistoryMonthlyAQI"
     future_url = "https://aqi-heatwave-app.azurewebsites.net/api/aqi/getMonthlyAQIPredictions"
 
-    # Define the request payload
     payload = {
         "City":city
     }
 
-    # Send the POST request and store the response in a variable
+   
     r1 = requests.post(history_url, json=payload)
     data1=json.loads(r1.text)
-    # Convert the response to a pandas DataFrame
+  
     df_hist=json_normalize(data1)
     df_hist['DATE'] = pd.to_datetime(df_hist['DATE'])
 
-    # Format the datetime object as "YYYY-MM-DD" and store it in a new column
+    
     df_hist['DATE'] = df_hist['DATE'].dt.strftime('%Y-%m-%d')
     df_hist['AQI']=np.round(df_hist['AQI'])
    
     r2 = requests.post(future_url, json=payload)
     data2=json.loads(r2.text)
-    # Convert the response to a pandas DataFrame
+ 
     df_fut=json_normalize(data2)
     df_fut['Predictions']=np.round(df_fut['Predictions'])
     
@@ -152,24 +151,28 @@ def display_monthly(city):
     with st.container():
         st.markdown("<h2 style='font-family:Verdana'><b>CURRENT AIR QUALITY INDEX</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
-        col1, col2,col3 = st.columns(3)
-        
+      
         today_date=date.today()
         res = today_date.replace(day=1)
         
         today_aqi= df_hist.loc[df_hist['DATE'] == str(res), 'AQI'].values[0]
-        with col1:
-            st.header("**THIS MONTH**")
-            st.text(res)
-        with col2:
-            
 
-            card(
-                 title="AQI",
-                 text=today_aqi,
-                 image='https://t3.ftcdn.net/jpg/01/70/53/70/240_F_170537095_942g7Zk2TcXplIdXpraxPN1C7YR8kDEk.jpg'
-                 
-                )
+        fig = go.Figure(go.Indicator(
+        domain = {'x': [0, 1], 'y': [0, 1]},
+        value = today_aqi,
+        mode = "gauge+number",
+        title = {'text': "AQI"},
+        
+        gauge = {'axis': {'range': [None, 500]},
+                'steps' : [
+                    {'range': [0, 250], 'color': "lightgray"},
+                    {'range': [250, 400], 'color': "gray"}],
+                'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 490}}))
+        
+        st.plotly_chart(fig,use_container_width=True)
+       
+
+
         
         text=get_aqi_message(today_aqi)
         st.markdown(f"<h3 style='font-family:Verdana'>{text}</h3>", unsafe_allow_html=True)
@@ -181,6 +184,7 @@ def display_monthly(city):
     with st.container():
         st.markdown("<h2 style='font-family:Verdana'><b>MONTHLY AIR QUALITY INDEX FORECAST</b></h2>", unsafe_allow_html=True)
         st.markdown("""---""")
+        
         
         fig = go.Figure(data=go.Bar(x=df_fut['Date'], y=df_fut['Predictions']))
 
