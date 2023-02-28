@@ -31,10 +31,11 @@ def get_data(query , city_name = None):
         df_aqi = get_request_data(aqiforecast_url,cityname=city_name)
         df_aqi['Predictions']=np.round(df_aqi['Predictions'],2)
 
-        date = df_weather['Date'].to_list()
-        aqi_date = df_aqi['Date'].to_list()
+        date = df_weather['Date'].to_list()[:7]
+        aqi_forecast = df_aqi['Predictions'].to_list()[:7]
+        weather_forecast = df_weather['Predictions'].to_list()[:7]
 
-        print(weather_date,aqi_date)
+        print(date,aqi_forecast,weather_forecast)
 
 
         try:
