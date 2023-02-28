@@ -61,7 +61,7 @@ with col4:
 
 with col5:
     st.header("{}".format(forecast_dates[4]))
-    st.metric("# TEMPERATURE", str(
+    st.metric("TEMPERATURE", str(
         weather_forecast[4])+temp_unit, delta=round(weather_forecast[4]-float(temp), 2))
     st.metric("AQI", aqi_forecast[4], delta=round(
         aqi_forecast[4]-float(current_aqi), 2))
