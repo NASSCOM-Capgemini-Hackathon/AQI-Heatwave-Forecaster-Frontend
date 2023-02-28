@@ -12,47 +12,83 @@ city = st.selectbox("SELECT ANY ONE OF THE CITY ", ("Adilabad",
 temp_unit = " °C"
 wind_unit = " km/h"
 
-df, bar_fig, line_fig, temp, current_weather, icon = get_data("Get current data",city)
+line_aqi_fig, line_weather_fig, temp, current_weather, icon, forecast_dates, aqi_forecast, weather_forecast, current_aqi = get_data(
+    "Get current data", city)
 
-col1, col2 = st.columns(2)
+st.markdown("___")
+st.markdown("# **:blue[Live Data]**")
+col1, col2, col3 = st.columns(3)
 with col1:
-    st.write("## Current Temperature ")
-with col2:
-    st.image(
-        f"http://openweathermap.org/img/wn/{icon}@2x.png")
-
-col1, col2 = st.columns(2)
-col1.metric("TEMPERATURE", temp+temp_unit)
-col2.metric("WEATHER", current_weather)
-
-tab1, tab2 = st.tabs(["Bar Graph", "Line Graph"])
-
-with tab1:
-    st.plotly_chart(bar_fig, use_container_width=True)
-
-with tab2:
-    st.plotly_chart(line_fig, use_container_width=True)
-
-st.table(df)
-
-col1, col2, col3 ,col4 ,col5 ,col6 ,col7 = st.columns(7)
-with col1:
-   st.header("A dog")
+    st.metric("TEMPERATURE", temp+temp_unit)
 
 with col2:
-   st.header("A dog")
+    st.metric("WEATHER", current_weather)
 
 with col3:
-   st.header("An owl")
+    st.metric("AQI", current_aqi)
+
+st.markdown("___")
+st.markdown("# **:blue[Weekly Forecast Data]**")
+col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
+with col1:
+    st.header("{}".format(forecast_dates[0]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[0])+temp_unit, delta=round(weather_forecast[0]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[0], delta=round(
+        aqi_forecast[0]-float(current_aqi), 2))
+
+with col2:
+    st.header("{}".format(forecast_dates[1]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[1])+temp_unit, delta=round(weather_forecast[1]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[1], delta=round(
+        aqi_forecast[1]-float(current_aqi), 2))
+
+with col3:
+    st.header("{}".format(forecast_dates[2]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[2])+temp_unit, delta=round(weather_forecast[2]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[2], delta=round(
+        aqi_forecast[2]-float(current_aqi), 2))
 
 with col4:
-   st.header("A cat")
+    st.header("{}".format(forecast_dates[3]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[3])+temp_unit, delta=round(weather_forecast[3]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[3], delta=round(
+        aqi_forecast[3]-float(current_aqi), 2))
+
 
 with col5:
-   st.header("A dog")
+    st.header("{}".format(forecast_dates[4]))
+    st.metric("# TEMPERATURE", str(
+        weather_forecast[4])+temp_unit, delta=round(weather_forecast[4]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[4], delta=round(
+        aqi_forecast[4]-float(current_aqi), 2))
+
 
 with col6:
-   st.header("An owl")
+    st.header("{}".format(forecast_dates[5]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[5])+temp_unit, delta=round(weather_forecast[5]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[5], delta=round(
+        aqi_forecast[5]-float(current_aqi), 2))
+
 
 with col7:
-   st.header("asds")
+    st.header("{}".format(forecast_dates[6]))
+    st.metric("TEMPERATURE", str(
+        weather_forecast[6])+temp_unit, delta=round(weather_forecast[6]-float(temp), 2))
+    st.metric("AQI", aqi_forecast[6], delta=round(
+        aqi_forecast[6]-float(current_aqi), 2))
+
+st.markdown("___")
+
+st.markdown("# **:blue[Forecast Plots]**")
+tab1, tab2 = st.tabs(["AQI Line Graph", "Weather Line Graph"])
+
+with tab1:
+    st.plotly_chart(line_aqi_fig, use_container_width=True)
+
+with tab2:
+    st.plotly_chart(line_weather_fig, use_container_width=True)
