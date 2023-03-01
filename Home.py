@@ -15,6 +15,9 @@ wind_unit = " km/h"
 line_aqi_fig, line_weather_fig, temp, current_weather, icon, forecast_dates, aqi_forecast, weather_forecast, current_aqi = get_data(
     "Get current data", city)
 
+with open('style.css')as f:
+    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
 st.markdown("___")
 st.markdown("# **:blue[Live Data]**")
 col1, col2, col3 = st.columns(3)
@@ -29,30 +32,30 @@ with col3:
 
 st.markdown("___")
 st.markdown("# **:blue[Weekly Forecast Data]**")
-col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
+col1, col2, col3, col4, col5, col6, col7 = st.columns(7, gap="large")
 with col1:
-    st.header("{}".format(forecast_dates[0]))
+    st.subheader("{}".format(forecast_dates[0]))
     st.metric("TEMPERATURE", str(
         weather_forecast[0])+temp_unit, delta=round(weather_forecast[0]-float(temp), 2))
     st.metric("AQI", aqi_forecast[0], delta=round(
         aqi_forecast[0]-float(current_aqi), 2))
 
 with col2:
-    st.header("{}".format(forecast_dates[1]))
+    st.subheader("{}".format(forecast_dates[1]))
     st.metric("TEMPERATURE", str(
         weather_forecast[1])+temp_unit, delta=round(weather_forecast[1]-float(temp), 2))
     st.metric("AQI", aqi_forecast[1], delta=round(
         aqi_forecast[1]-float(current_aqi), 2))
 
 with col3:
-    st.header("{}".format(forecast_dates[2]))
+    st.subheader("{}".format(forecast_dates[2]))
     st.metric("TEMPERATURE", str(
         weather_forecast[2])+temp_unit, delta=round(weather_forecast[2]-float(temp), 2))
     st.metric("AQI", aqi_forecast[2], delta=round(
         aqi_forecast[2]-float(current_aqi), 2))
 
 with col4:
-    st.header("{}".format(forecast_dates[3]))
+    st.subheader("{}".format(forecast_dates[3]))
     st.metric("TEMPERATURE", str(
         weather_forecast[3])+temp_unit, delta=round(weather_forecast[3]-float(temp), 2))
     st.metric("AQI", aqi_forecast[3], delta=round(
@@ -60,7 +63,7 @@ with col4:
 
 
 with col5:
-    st.header("{}".format(forecast_dates[4]))
+    st.subheader("{}".format(forecast_dates[4]))
     st.metric("TEMPERATURE", str(
         weather_forecast[4])+temp_unit, delta=round(weather_forecast[4]-float(temp), 2))
     st.metric("AQI", aqi_forecast[4], delta=round(
@@ -68,7 +71,7 @@ with col5:
 
 
 with col6:
-    st.header("{}".format(forecast_dates[5]))
+    st.subheader("{}".format(forecast_dates[5]))
     st.metric("TEMPERATURE", str(
         weather_forecast[5])+temp_unit, delta=round(weather_forecast[5]-float(temp), 2))
     st.metric("AQI", aqi_forecast[5], delta=round(
@@ -76,7 +79,7 @@ with col6:
 
 
 with col7:
-    st.header("{}".format(forecast_dates[6]))
+    st.subheader("{}".format(forecast_dates[6]))
     st.metric("TEMPERATURE", str(
         weather_forecast[6])+temp_unit, delta=round(weather_forecast[6]-float(temp), 2))
     st.metric("AQI", aqi_forecast[6], delta=round(

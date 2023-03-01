@@ -5,3 +5,4 @@ streamlit-card==0.0.4
 s3fs==2023.1.
 plotly-calplot==0.1.13
 beautifulsoup4==4.11.2
+prophet==1.1.2
