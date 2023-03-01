@@ -19,8 +19,13 @@ line_aqi_fig, line_weather_fig, temp, current_weather, icon, forecast_dates, aqi
 with open('style.css')as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
+st.markdown("___")
+
 main_col1, main_col2 = st.columns(2)
 with main_col1:
+    st.markdown("# **:blue[Live Data]**")
+    st.text(" ")
+
     col1, col2 = st.columns(2)
     with col1:
         st.metric("TEMPERATURE", temp+temp_unit)
@@ -32,7 +37,7 @@ with main_col1:
 
     col1, col2 = st.columns(2)
     with col1:
-        st.write("# Current Temperature ➡️ ")
+        st.write("## Current Temperature➡️ ")
     with col2:
         st.image(
             f"http://openweathermap.org/img/wn/{icon}@2x.png")
@@ -40,9 +45,6 @@ with main_col1:
 with main_col2:
     gauge_chart = utils.gauge_chart(int(current_aqi))
     st.plotly_chart(gauge_chart, use_container_width=True)
-
-st.markdown("___")
-st.markdown("# **:blue[Live Data]**")
 
 
 st.markdown("___")
