@@ -2,7 +2,7 @@ pandas==1.5.3
 plotly==5.13.0
 streamlit==1.18.1
 streamlit-card==0.0.4
-s3fs==2023.1.
+s3fs==2023.1.0
 plotly-calplot==0.1.13
 beautifulsoup4==4.11.2
 prophet==1.1.2
