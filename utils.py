@@ -1,10 +1,13 @@
 from plotly import graph_objects as go
+from plotly.subplots import make_subplots
 import requests
 import json
+import numpy as np
+import pandas as pd
 from pandas import json_normalize
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
-
+from statsmodels.tsa.seasonal import DecomposeResult, seasonal_decompose
 
 URL_MAPPING = {'Adilabad': 'https://www.aqi.in/dashboard/india/telangana/adilabad',
                'Nizamabad': 'https://www.aqi.in/dashboard/india/telangana/nizamabad',
@@ -20,8 +23,99 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KH
            'Connection': 'keep-alive'}
 
 
+def gauge_chart(value):
+    fig = go.Figure(go.Indicator(
+        mode="gauge+number",
+        value=value,
+        domain={'x': [0, 1], 'y': [0, 1]},
+        gauge={'axis': {'range': [None, 500]},
+               'borderwidth': 2,
+               'bordercolor': "gray",
+               'bgcolor': "white",
+               'steps': [
+            {'range': [0, 50], 'color': "green"},
+            {'range': [51, 100], 'color': "lightgreen"},
+            {'range': [101, 200], 'color': "yellow"},
+            {'range': [201, 300], 'color': "orange"},
+            {'range': [301, 400], 'color': "red"},
+            {'range': [401, 500], 'color': "darkred"}
+        ],
+            'threshold': {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': value}
+        },
+        title={'text': "AQI levels"}))
+    fig.update_layout(font = {'color': "darkblue", 'family': "Arial"})
+
+    return fig
+
+
+def plot_seasonal_decompose(result: DecomposeResult, city, column, dates: pd.Series = None):
+    """
+        This function is used to plot the Time series plots to find the infer trends,
+        seasonality, cyclic nature for the different metrics
+    """
+    title = "Seasonal Decomposition "+city+" of the "+column+" attribute"
+    x_values = dates if dates is not None else np.arange(len(result.observed))
+    return (
+        make_subplots(
+            rows=4,
+            cols=1,
+            subplot_titles=["Observed", "Trend", "Seasonal", "Residuals"],
+        )
+        .add_trace(
+            go.Scatter(x=x_values, y=result.observed,
+                       mode="lines", name='Observed'),
+            row=1,
+            col=1,
+        )
+        .add_trace(
+            go.Scatter(x=x_values, y=result.trend, mode="lines", name='Trend'),
+            row=2,
+            col=1,
+        )
+        .add_trace(
+            go.Scatter(x=x_values, y=result.seasonal,
+                       mode="lines", name='Seasonal'),
+            row=3,
+            col=1,
+        )
+        .add_trace(
+            go.Scatter(x=x_values, y=result.resid,
+                       mode="lines", name='Residual'),
+            row=4,
+            col=1,
+        )
+        .update_layout(
+            height=900, title=title, showlegend=False
+        )
+    )
+
+
+def heat_map_chart(df, title):
+    df_corr = df.corr()
+    fig = go.Figure()
+    fig.add_trace(
+        go.Heatmap(
+            x=df_corr.columns,
+            y=df_corr.index,
+            z=np.array(df_corr),
+            text=df_corr.values,
+            texttemplate='%{text:.2f}'
+        )
+    )
+    fig.layout.update(title_text=title)
+    return fig
+
+
+def linechart_with_range_slider(X_axis, Y_axis, parameter_name, title):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=X_axis, y=Y_axis,
+                  name=parameter_name, line_color="blue"))
+    fig.layout.update(title_text=title, xaxis_rangeslider_visible=True)
+    return fig
+
+
 def get_current_aqi(city):
-    global URL_MAPPING,HEADERS
+    global URL_MAPPING, HEADERS
     req = Request(URL_MAPPING[city], headers=HEADERS)
     html_page = urlopen(req)
     soup = BeautifulSoup(html_page, "html.parser")
