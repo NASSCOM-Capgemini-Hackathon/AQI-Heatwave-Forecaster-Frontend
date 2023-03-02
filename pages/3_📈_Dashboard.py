@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 import s3fs
 import utils
-import prophet
+from plotly_calplot import calplot
 from data import get_data
 from statsmodels.tsa.seasonal import seasonal_decompose
 import warnings
@@ -38,6 +38,10 @@ def display_aqi(city, slider_col):
     heatmap_fig = utils.heat_map_chart(
         aqi_city[aqi_col_attributes], "Correlation between Features")
     st.plotly_chart(heatmap_fig, use_container_width=True)
+
+    fig = calplot(aqi_city,showscale=True, name=aqi_attributes, month_lines_width=15,
+                  month_lines_color='#FFFFFF', title="Calender Heatmap for attribute {} in {}".format(aqi_attributes,city) ,x='DATE', y=aqi_attributes)
+    st.plotly_chart(fig, use_container_width=True)
 
     analysis = aqi_city[[aqi_attributes]].copy()
     decompose_result_mult = seasonal_decompose(
@@ -74,6 +78,10 @@ def display_heatwave(city, slider_col):
         weather_city, "Correlation between Features")
     st.plotly_chart(heatmap_fig, use_container_width=True)
 
+    fig = calplot(weather_city,showscale=True,title="Calender Heatmap for attribute {} in {}".format(weather_attributes,city),name=weather_attributes, month_lines_width=15,
+                  month_lines_color='#FFFFFF', x='DATE', y=weather_attributes)
+    st.plotly_chart(fig, use_container_width=True)
+
     analysis = weather_city[['Max Temp']].copy()
     decompose_result_mult = seasonal_decompose(
         analysis, model="multiplicative", period=int(len(weather_city)/2), extrapolate_trend='freq')
@@ -100,7 +108,7 @@ with main_c1:
 
     with col2:
         options = st.selectbox(
-            "Select the Feature To Be Predicted",
+            "Select the Feature To Be Viewed",
             ("Heatwave", "AQI")
         )
 

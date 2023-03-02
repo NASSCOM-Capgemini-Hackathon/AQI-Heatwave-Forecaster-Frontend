@@ -33,7 +33,9 @@ with main_col1:
     with col2:
         st.metric("AQI", current_aqi)
 
-    st.metric("WEATHER", current_weather)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("WEATHER", current_weather)
 
     col1, col2 = st.columns(2)
     with col1:

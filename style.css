@@ -1,9 +1,10 @@
 [data-testid=metric-container] {
-    box-shadow: 0 0 3px #cccccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 3px #949494;
     padding: 10px;
 }
 
-.plot-container>div {
-    box-shadow: 0 0 3px #323131;
-    padding: 10px;
-}
+/* .plot-container>div {
+    /* border-radius: 10px;
+    box-shadow: 0 3px 5px #666666; */
+} */
