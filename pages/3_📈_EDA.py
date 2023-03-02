@@ -1,14 +1,15 @@
 # Libraries
 import streamlit as st
-import pandas as pd
-import s3fs
 import utils
 from plotly_calplot import calplot
 from data import get_data
+import os
 from statsmodels.tsa.seasonal import seasonal_decompose
 import warnings
 warnings.filterwarnings("ignore")
 
+
+path = os.path.dirname(__file__)
 
 def display_aqi(city):
     aqi_city = get_data("dashboard-aqi", city)
@@ -101,7 +102,7 @@ st.set_page_config(page_title='Dashboard AQI & Heatwave',
 st.header("Dashboard for AQI and Heatwaves")
 
 st.markdown('### **:blue[STEP 1 : PREPROCESSING]**')
-st.image('images\interpolatepng.png')
+st.image('./images/interpolatepng.png')
 with st.expander("See explanation"):
     st.markdown(
         '''
