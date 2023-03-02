@@ -167,7 +167,7 @@ def show_geomap():
                 unsafe_allow_html=True)
     st.subheader("Heatwave Occurences Count")
     st.text("")
-    image = Image.open('images\geomap.jpg')
+    image = Image.open('./images/geomap.jpg')
     st.image(image, caption='Heatwave Frequencies for the given cities')
 
 
