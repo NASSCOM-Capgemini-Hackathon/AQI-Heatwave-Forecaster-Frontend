@@ -54,4 +54,29 @@ def get_data(query, city_name=None):
         except Exception as e:
             print("Error message "+str(e))
 
+    elif query == "dashboard-aqi":
+        aqi_url = "https://aqi-heatwave-app.azurewebsites.net/api/aqi/getHistoryDailyAQI"
+        df_aqi = get_request_data(aqi_url, cityname=city_name)
+
+        df_aqi.replace('-', np.nan, inplace=True)
+        df_aqi['DATE'] = pd.to_datetime(
+            df_aqi['DATE'], format='%Y/%m/%d').dt.date
+
+        for col in df_aqi.columns.to_list()[1:]:
+            df_aqi[col] = df_aqi[col].astype("float64")
+        return df_aqi
+
+    elif query == "dashboard-weather":
+        aqi_url = "https://aqi-heatwave-app.azurewebsites.net/api/weather/getHistoryDailyWeather"
+        df_weather = get_request_data(aqi_url, cityname=city_name)
+
+        df_weather.replace('-', np.nan, inplace=True)
+        df_weather['DATE'] = pd.to_datetime(
+            df_weather['DATE'], format='%Y/%m/%d').dt.date
+
+        for col in df_weather.columns.to_list()[1:]:
+            df_weather[col] = df_weather[col].astype("float64")
+
+        return df_weather, df_weather.columns.to_list()[1:]
+
     return None
