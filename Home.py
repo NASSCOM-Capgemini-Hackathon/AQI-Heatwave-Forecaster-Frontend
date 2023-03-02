@@ -2,7 +2,7 @@
 import streamlit as st
 from data import get_data
 import utils
-
+import numpy as np
 # Confit
 st.set_page_config(page_title='AQI Weather Forecaster',
                    page_icon=':bar_chart:', layout='wide', initial_sidebar_state='collapsed')
@@ -13,8 +13,29 @@ city = st.selectbox("SELECT ANY ONE OF THE CITY ", ("Adilabad",
 temp_unit = " °C"
 wind_unit = " km/h"
 
-line_aqi_fig, line_weather_fig, temp, current_weather, icon, forecast_dates, aqi_forecast, weather_forecast, current_aqi = get_data(
+line_aqi_fig, line_weather_fig, temp, current_weather, icon, forecast_dates, aqi_forecast, weather_forecast, current_aqi,condition = get_data(
     "Get current data", city)
+
+
+def getWeatherIcon(condition):
+    if (condition < 300):
+      return '🌩'
+    elif (condition < 400):
+      return '🌧'
+    elif (condition < 600):
+      return '☔️'
+    elif (condition < 700):
+      return '☃️'
+    elif (condition < 800):
+      return '🌫'
+    elif (condition == 800):
+      return '☀️'
+    elif (condition <= 804):
+      return '☁️'
+    else: 
+      return '🤷‍'
+    
+  
 
 with open('style.css')as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -35,14 +56,14 @@ with main_col1:
 
     col1, col2 = st.columns(2)
     with col1:
-        st.metric("WEATHER", current_weather)
+        st.metric("WEATHER", f"{current_weather}  {getWeatherIcon(condition)} ")
 
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write("## Current Temperature➡️ ")
-    with col2:
-        st.image(
-            f"http://openweathermap.org/img/wn/{icon}@2x.png")
+    # col1, col2 = st.columns(2)
+    # with col1:
+    #     st.write("## Current Temperature➡️ ")
+    # with col2:
+    #    st.title(getWeatherIcon(condition))
+        
 
 with main_col2:
     gauge_chart = utils.gauge_chart(int(current_aqi))

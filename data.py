@@ -21,11 +21,11 @@ def get_data(query, city_name=None):
 
         weatherforecast_url = "https://aqi-heatwave-app.azurewebsites.net/api/weather/getDailyWeatherPredictions"
         df_weather = get_request_data(weatherforecast_url, cityname=city_name)
-        df_weather['Predictions'] = np.round(df_weather['Predictions'], 2)
+        df_weather['Predictions'] = np.round(df_weather['Predictions']).astype(int)
 
         aqiforecast_url = "https://aqi-heatwave-app.azurewebsites.net/api/aqi/getDailyAQIPredictions"
         df_aqi = get_request_data(aqiforecast_url, cityname=city_name)
-        df_aqi['Predictions'] = np.round(df_aqi['Predictions'], 2)
+        df_aqi['Predictions'] = np.round(df_aqi['Predictions']).astype(int)
 
         current_aqi = get_current_aqi(city_name)
 
@@ -41,15 +41,16 @@ def get_data(query, city_name=None):
         try:
 
             cel = 273.15
-            icon = x["weather"][0]["icon"]
+            icon = x["weather"][0]["icon"],
+            condition=x['weather'][0]['id']
             current_weather = x["weather"][0]["description"].title()
-            temp = str(round(x["main"]["temp"]-cel, 2))
+            temp = str(round(x["main"]["temp"]-cel))
             line_aqi_fig = linegraph(
                 forecast_dates, aqi_forecast, "AQI", "DATES", "AQI")
             line_weather_fig = linegraph(
                 forecast_dates, weather_forecast, "WEATHER", "DATES", "WEATHER")
 
-            return line_aqi_fig, line_weather_fig, temp, current_weather, icon, forecast_dates, aqi_forecast, weather_forecast, current_aqi
+            return line_aqi_fig, line_weather_fig, temp, current_weather, icon, forecast_dates, aqi_forecast, weather_forecast, current_aqi,condition
 
         except Exception as e:
             print("Error message "+str(e))
