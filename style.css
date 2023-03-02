@@ -4,5 +4,6 @@
 }
 
 .plot-container>div {
-    box-shadow: 0 0 3px #cccccc;
+    box-shadow: 0 0 3px #323131;
+    padding: 10px;
 }

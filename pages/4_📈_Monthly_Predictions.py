@@ -37,21 +37,20 @@ def get_statistics(df, feature):
     print_top3(sorted_asc)
 
 
-models_names = {
-    'Adilabad': 'Holtz',
-    'Warangal': 'HoltWinters',
-    'Karimnagar': 'CES',
-    'Khammam': 'CES',
-    'Nizamabad': 'Prophet'
-}
-
-
-def display_model_details(city, forecast):
+def display_model_details(city, forecast, feature):
+    if feature == 'AQI':
+        f = open(
+            'E:/NASSCOMM Hackathon/AQI-Heatwave-Forecaster-Frontend/descriptions/aqi/{}.json'.format(city))
+        model_details = json.load(f)
+    else:
+        f = open(
+            'descriptions/weather/{}.json'.format(city))
+        model_details = json.load(f)
     st.markdown("<hr>",
                 unsafe_allow_html=True)
     st.header("MODEL USED")
     st.text("")
-    st.subheader(models_names[city]+" Time Series Model")
+    st.subheader(model_details["model"]+" Time Series Model")
     st.text("")
     fs = s3fs.S3FileSystem(key='AKIAQOY2QI5NU7SFAHPH',
                                secret='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')
@@ -83,10 +82,26 @@ def display_model_details(city, forecast):
         with col2:
             st.metric('MAPE', round(mape, 4), 0)
             st.metric('Accuracy %', round(100-mape, 2), 0)
+    st.header("MODEL EVALUATION INFERENCE")
+    container1 = st.container()
+    with container1:
+        st.text("")
+        st.write(model_details['evalutation_description'])
+        st.text("")
+    st.header("MODEL USAGE REASONING")
+    container2 = st.container()
+    with container2:
+        st.text("")
+        st.write(model_details['model_usage_reasoning'])
+        st.text("")
     st.header("Predicted Vs Actual Values For Test set")
     fig = utils.linegraph(aqi_test['Date'], aqi_test['y_test'],
                           'Actual AQI', 'Date', 'AQI', aqi_test['y_pred'], 'AQI Predicted')
     st.plotly_chart(fig, use_container_width=True)
+    with st.expander("See explanation"):
+        st.write("""
+            The chart above shows the plot of the actual and the predicted values of testing data.The red line displays the predicted values and the blue lines represent the actual value of the feature. We have taken the last 20%  of the data for testing data.
+        """)
     st.markdown("<hr>", unsafe_allow_html=True)
     st.header("Forecasted Values")
     fig = utils.linegraph(forecast['Date'], forecast['Predictions'],
@@ -126,7 +141,7 @@ def display_aqi(city, slider_col):
 
     st.markdown("<hr>", unsafe_allow_html=True)
     get_statistics(aqi_city, 'AQI')
-    display_model_details(city, aqi_city)
+    display_model_details(city, aqi_city, 'AQI')
 
 
 def load_prophet(city):
@@ -169,10 +184,12 @@ def display_heatwave(city, slider_col):
         st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("<hr>", unsafe_allow_html=True)
+    c1, c2 = st.columns(2, gap="large")
     get_statistics(weather_city, 'Weather')
     st.markdown("<hr>", unsafe_allow_html=True)
     st.subheader("Prophet Model Forecasts")
     load_prophet(city)
+    display_model_details(city, weather_city, 'Weather')
 
 
 # Config
@@ -192,7 +209,7 @@ main_c1, main_c2 = st.columns(2, gap="medium")
 
 with main_c1:
     col1, col2 = st.columns(2, gap="large")
-    city_list = ['Adilabad', 'Warangal', 'Karimnagar', 'Khammam', 'Nizamabad']
+    city_list = ['Warangal', 'Karimnagar', 'Khammam', 'Nizamabad', 'Adilabad']
     with col1:
         city = st.selectbox(
             "Select City",

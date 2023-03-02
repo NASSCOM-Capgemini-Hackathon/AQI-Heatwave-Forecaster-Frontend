@@ -49,7 +49,7 @@ with main_col2:
 
 st.markdown("___")
 st.markdown("# **:blue[Weekly Forecast Data]**")
-col1, col2, col3, col4, col5, col6, col7 = st.columns(7, gap="large")
+col1, col2, col3, col4, col5, col6, col7 = st.columns(7, gap="medium")
 with col1:
     st.subheader("{}".format(forecast_dates[0]))
     st.metric("TEMPERATURE", str(
