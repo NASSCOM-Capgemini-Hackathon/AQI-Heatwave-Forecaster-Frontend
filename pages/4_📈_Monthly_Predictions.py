@@ -41,11 +41,11 @@ def get_statistics(df, feature):
 def display_model_details(city, forecast, feature):
     if feature == 'AQI':
         f = open(
-            'descriptions/aqi/{}.json'.format(city))
+            './descriptions/aqi/{}.json'.format(city))
         model_details = json.load(f)
     else:
         f = open(
-            'descriptions/weather/{}.json'.format(city))
+            './descriptions/weather/{}.json'.format(city))
         model_details = json.load(f)
     st.markdown("<hr>",
                 unsafe_allow_html=True)
@@ -153,8 +153,8 @@ def load_prophet(city):
     with open('models\{}_model.json'.format(city), 'r') as fin:
         m = model_from_json(fin.read())
 
-    fs = s3fs.S3FileSystem(key='AKIAQOY2QI5NU7SFAHPH',
-                           secret='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')
+    fs = s3fs.S3FileSystem(key=st.secrets.aws_credentials.AWS_KEY,
+                           secret=st.secrets.aws_credentials.AWS_SECRET_KEY)
     with fs.open('capegemini-hackathon/prophet/forecasts/pred-{}.csv'.format(city)) as f:
         forecasts = pd.read_csv(f, header=0)
     forecasts.drop(list(forecasts.columns)[0], axis=1, inplace=True)
@@ -245,7 +245,7 @@ with main_c1:
     with col2:
         options = st.selectbox(
             "Select the Feature To Be Predicted",
-            ("AQI", "Heatwave")
+            ("Heatwave", "AQI")
         )
 if options == 'AQI':
     display_aqi(city, main_c2)
