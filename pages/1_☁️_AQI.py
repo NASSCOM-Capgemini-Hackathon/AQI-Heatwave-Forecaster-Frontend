@@ -12,6 +12,7 @@ import numpy as np
 from streamlit_card import card
 from datetime import datetime
 from scipy.stats import skew
+from plotly_calplot import calplot
 
 
 theme_plotly = "streamlit"
@@ -130,16 +131,17 @@ def display_daily(city):
         st.plotly_chart(fig,use_container_width=True)
         min_date=df_hist.loc[df_hist['AQI']==res[0],'DATE'].iloc[0]
         max_date=df_hist.loc[df_hist['AQI']==res[2],'DATE'].iloc[0]
-        st.markdown(
-                    f"""
-                    **Inference:**
-                    - **Minimum AQI for {city} was on {min_date}**
-                    - **Maximum AQI for {city} was on {max_date}**
-                    - **{calc_skew(df_hist,'AQI')}**
-                    """
-                    )
+        with st.expander("**Inference**"):
 
-        
+            st.markdown(
+                        f"""
+                        - **Minimum AQI for {city} was on {min_date}**
+                        - **Maximum AQI for {city} was on {max_date}**
+                        - **{calc_skew(df_hist,'AQI')}**
+                        """
+                        )
+
+    
         
         
 
@@ -220,17 +222,21 @@ def display_monthly(city):
         st.plotly_chart(fig,use_container_width=True)
         min_date=df_hist.loc[df_hist['AQI']==res[0],'DATE'].iloc[0]
         max_date=df_hist.loc[df_hist['AQI']==res[2],'DATE'].iloc[0]
-        st.markdown(
-                    f"""
-                    **Inference:**
-                    - **Minimum AQI for {city} was on {datetime.strptime(min_date,'%Y-%m-%d').strftime('%B %Y')}**
-                    - **Maximum AQI for {city} was on {datetime.strptime(max_date,'%Y-%m-%d').strftime('%B %Y')}**
-                    - **{calc_skew(df_hist,'AQI')}**
-                    """
-                    )
+        with st.expander("**Inference**"):
+            st.markdown(
+                        f"""
+                        - **Minimum AQI for {city} was on {datetime.strptime(min_date,'%Y-%m-%d').strftime('%B %Y')}**
+                        - **Maximum AQI for {city} was on {datetime.strptime(max_date,'%Y-%m-%d').strftime('%B %Y')}**
+                        - **{calc_skew(df_hist,'AQI')}**
+                        """
+                        )
     
     
-
+    # with st.container():
+    #     df_fut_1=df_fut.copy()
+    #     df_fut_1['DATE']=pd.to_datetime(df_fut_1['DATE'])
+    #     fig = calplot(df_fut_1, x="DATE", y="Predictions",title="AQI FORECAST OVER THE YEAR")
+    #     st.plotly_chart(fig,use_container_width=True)
         
 
 

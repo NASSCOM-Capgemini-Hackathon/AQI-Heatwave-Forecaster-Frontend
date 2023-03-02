@@ -11,120 +11,131 @@ from pandas import json_normalize
 import numpy as np
 from streamlit_card import card
 from datetime import date
-
-
+from scipy.stats import skew
+from datetime import datetime
 # Global Variables
 theme_plotly = "streamlit" # None or streamlit
 
-def get_aqi_message(aqi):
-    if aqi <= 50:
-        message = "Air quality is good ✅. Enjoy your outdoor activities!"
-    elif aqi <= 100:
-        message = "Air quality is moderate 🧐. People with respiratory issues may experience symptoms."
-    elif aqi <= 150:
-        message = "Air quality is unhealthy for sensitive groups 😶‍🌫️. Children, older adults and people with heart or lung disease should reduce prolonged or heavy exertion."
-    elif aqi <= 200:
-        message = "Air quality is unhealthy 😷. Everyone may experience symptoms."
-    elif aqi <= 300:
-        message = "Air quality is very unhealthy 😵. People with respiratory or heart disease, older adults, and children should avoid prolonged or heavy exertion."
-    else:
-        message = "Air quality is hazardous ☠️. Everyone should avoid outdoor activities."
-    
-    return message
 
+
+
+def calc_skew(df,target):
+    
+    skewness = skew(df[target])
+
+    # determine skewness type based on skewness coefficient
+    if skewness > 0:
+        return "The Temperature data is right-skewed"
+    elif skewness < 0:
+        return "The Temperature data is left-skewed"
+    else:
+        return "The Temperature data is normally distributed"
+
+def get_statistics(df,target):
+    median=np.mean(df[target].values)
+    max=np.max(df[target].values)
+    min=np.min(df[target].values)
+    return min,median,max
+    
+def print_3(stat,names):
+    col_list = list(st.columns(3, gap="medium"))
+    for i in range(len(col_list)):
+        with col_list[i]:
+            # print(df['Predictions'].iloc[i])
+            st.metric(names[i],f"{int(np.round(stat[i]))} °C")
 
 def display_daily(city):
     
 
-    # Define the API endpoint URL
     history_url="https://aqi-heatwave-app.azurewebsites.net/api/weather/getHistoryDailyWeather"
     future_url = "https://aqi-heatwave-app.azurewebsites.net/api/weather/getDailyWeatherPredictions"
 
-    # Define the request payload
     payload = {
         "City":city
     }
 
-    # Send the POST request and store the response in a variable
     r1 = requests.post(history_url, json=payload)
     data1=json.loads(r1.text)
-    # Convert the response to a pandas DataFrame
+   
     df_hist=json_normalize(data1)
-    
-
-    
-
-    # Convert the datetime string to a datetime object
     df_hist['DATE'] = pd.to_datetime(df_hist['DATE'])
-
-    # Format the datetime object as "YYYY-MM-DD" and store it in a new column
     df_hist['DATE'] = df_hist['DATE'].dt.strftime('%Y-%m-%d')
-
-    # Drop the original datetime string and datetime columns
-  
-     # Display the resulting DataFrame
-
-    df_hist['Max Temp']=np.round(df_hist['Max Temp'])
-
+    df_hist['AQI']=np.round(df_hist['Max Temp'])
     r2 = requests.post(future_url, json=payload)
     data2=json.loads(r2.text)
     
+    
     df_fut=json_normalize(data2)
     df_fut['Predictions']=np.round(df_fut['Predictions'])
-
+    df_fut.rename(columns={'Date':'DATE'},inplace=True)
+    
+    df_res=pd.merge(df_hist,df_fut,on='DATE',how='outer')
+    #st.write(df_res)
     with st.container():
         
-        st.markdown("<h2 style='font-family:Verdana'><b>CURRENT TEMPERATURE</b></h2>", unsafe_allow_html=True)
+        st.subheader("Daily Temperature Predictions")
         st.markdown("""---""")
-        
-        
-        today_date=str(date.today())
-    
-   
-        today_aqi= df_hist.loc[df_hist['DATE'] == today_date, 'Max Temp'].values[0]
-        
-       
-        fig = go.Figure(go.Indicator(
-        domain = {'x': [0, 1], 'y': [0, 1]},
-        value = today_aqi,
-        mode = "gauge+number",
-        title = {'text': "TEMPERATURE"},
-        
-        gauge = {'axis': {'range': [None, 500]},
-                'steps' : [
-                    {'range': [0, 250], 'color': "lightgray"},
-                    {'range': [250, 400], 'color': "gray"}],
-                'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 490}}))
-        
-        st.plotly_chart(fig,use_container_width=True)
-            
-        #text=get_aqi_message(today_aqi)
-        #st.markdown(f"<h3 style='font-family:Verdana'>{text}</h3>", unsafe_allow_html=True)
 
-        
-    
-    st.write('')
-    st.write('')
-    with st.container():
-        
-        st.markdown("<h2 style='font-family:Verdana'><b>DAILY TEMPERATURE FORECAST</b></h2>", unsafe_allow_html=True)
-        st.markdown("""---""")
-        
-        fig = go.Figure(data=go.Bar(x=df_fut['Date'], y=df_fut['Predictions']))
-
-
-        fig.update_layout(     
-            xaxis_title='Date',
-            yaxis_title='Temperature'
+        data = go.Scatter(
+            x = df_res["DATE"],
+            y = df_res["Max Temp"],
+            mode = 'lines',
+            name="Data values"
         )
+
+        pred = go.Scatter(
+            x = df_res["DATE"],
+            y = df_res["Predictions"],
+            mode = 'lines',
+             
+            line = {"color": "#9467bd"}, 
+            name="Forecast"
+        )
+
+    
+        data = [data,pred]
+
+        layout = go.Layout(title="Temperature Forecast")
+
+        fig = go.Figure(data=data,layout=layout)
         st.plotly_chart(fig,use_container_width=True)
+
+        st.text(' ')
+        st.text(' ')
+        st.markdown('---')
+        
+    with st.container():
+        st.subheader("Daily Temperature Data Statistics")
+        
+        st.markdown('---')
+        res=get_statistics(df_hist,'Max Temp')
+        stat=['Minimum','Median','Maximum']
+        print_3(res,stat)
+        fig = px.histogram(df_hist, x="Max Temp",title='Temperature Distribution',marginal='box')
+        st.plotly_chart(fig,use_container_width=True)
+        min_date=df_hist.loc[df_hist['Max Temp']==res[0],'DATE'].iloc[0]
+        max_date=df_hist.loc[df_hist['Max Temp']==res[2],'DATE'].iloc[0]
+        with st.expander("**Inference**"):
+
+            st.markdown(
+                        f"""
+                        
+                        - **Minimum Temperature for {city} was on {min_date}**
+                        - **Maximum Temperature for {city} was on {max_date}**
+                        - **{calc_skew(df_hist,'Max Temp')}**
+                        """
+                        )
+
+    
+        
+        
 
        
 
 
 def display_monthly(city):
-    history_url=""
-    future_url = "https://aqi-heatwave-app.azurewebsites.net/api/aqi/getMonthlyAQIPredictions"
+    history_url="https://aqi-heatwave-app.azurewebsites.net/api/weather/getHistoryMonthlyWeather"
+    future_url = "https://aqi-heatwave-app.azurewebsites.net/api/weather/getMonthlyWeatherPredictions"
 
     payload = {
         "City":city
@@ -135,90 +146,95 @@ def display_monthly(city):
     data1=json.loads(r1.text)
   
     df_hist=json_normalize(data1)
-    df_hist['DATE'] = pd.to_datetime(df_hist['DATE'])
-
-    
-    df_hist['DATE'] = df_hist['DATE'].dt.strftime('%Y-%m-%d')
+    #st.write(df_hist)
+    df_hist['Date'] = pd.to_datetime(df_hist['Date'])
     df_hist['Max Temp']=np.round(df_hist['Max Temp'])
-   
+    df_hist['Date'] = df_hist['Date'].dt.strftime('%Y-%m-%d')
     r2 = requests.post(future_url, json=payload)
     data2=json.loads(r2.text)
  
     df_fut=json_normalize(data2)
     df_fut['Predictions']=np.round(df_fut['Predictions'])
+   
     
-
-    with st.container():
-        st.markdown("<h2 style='font-family:Verdana'><b>CURRENT TEMPERATURE</b></h2>", unsafe_allow_html=True)
-        st.markdown("""---""")
-      
-        today_date=date.today()
-        res = today_date.replace(day=1)
-        
-        today_aqi= df_hist.loc[df_hist['DATE'] == str(res), 'Max Temp'].values[0]
-
-        fig = go.Figure(go.Indicator(
-        domain = {'x': [0, 1], 'y': [0, 1]},
-        value = today_aqi,
-        mode = "gauge+number",
-        title = {'text': "TEMPERATURE"},
-        
-        gauge = {'axis': {'range': [None, 500]},
-                'steps' : [
-                    {'range': [0, 250], 'color': "lightgray"},
-                    {'range': [250, 400], 'color': "gray"}],
-                'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 490}}))
-        
-        st.plotly_chart(fig,use_container_width=True)
-       
-
-
-        
-        #text=get_aqi_message(today_aqi)
-        #st.markdown(f"<h3 style='font-family:Verdana'>{text}</h3>", unsafe_allow_html=True)
-
-        #st.write(hasClicked)
+    df_res=pd.merge(df_hist,df_fut,on='Date',how='outer')
     
-    st.write('')
-    st.write('')
+    
     with st.container():
-        st.markdown("<h2 style='font-family:Verdana'><b>MONTHLY TEMPERATURE FORECAST</b></h2>", unsafe_allow_html=True)
+        st.text(' ')
+        st.text(' ')
+        st.markdown('---')
+        st.subheader("Monthly Temperature Predictions")
         st.markdown("""---""")
-        
-        
-        fig = go.Figure(data=go.Bar(x=df_fut['Date'], y=df_fut['Predictions']))
 
-
-        fig.update_layout(
-            xaxis_title='Date',
-            yaxis_title='Temperature'
+        data = go.Scatter(
+            x = df_res["Date"],
+            y = df_res["Max Temp"],
+            mode = 'lines',
+            name="Data values"
         )
+
+        pred = go.Scatter(
+            x = df_res["Date"],
+            y = df_res["Predictions"],
+            mode = 'lines',
+             
+            line = {"color": "#9467bd"}, 
+            name="Forecast"
+        )
+
+    
+        data = [data,pred]
+
+        layout = go.Layout(title="Temperature Forecast")
+
+        fig = go.Figure(data=data,layout=layout)
         st.plotly_chart(fig,use_container_width=True)
 
+        st.text(' ')
+        st.text(' ')
+        st.markdown('---')
+    
+    with st.container():
+        
+        st.subheader("Monthly Temperature Data Statistics")
+        st.markdown('---')
+        res=get_statistics(df_hist,'Max Temp')
+        stat=['Minimum','Median','Maximum']
+        print_3(res,stat)
+        fig = px.histogram(df_hist, x="Max Temp",title='Temperature Distribution',marginal='box')
+        st.plotly_chart(fig,use_container_width=True)
+        min_date=df_hist.loc[df_hist['Max Temp']==res[0],'Date'].iloc[0]
+        max_date=df_hist.loc[df_hist['Max Temp']==res[2],'Date'].iloc[0]
+        with st.expander("**Inference**"):
+        
+            st.markdown(
+                        f"""
+                        - **Minimum Temperature for {city} was on {datetime.strptime(min_date,'%Y-%m-%d').strftime('%B %Y')}**
+                        - **Maximum Temperature for {city} was on {datetime.strptime(max_date,'%Y-%m-%d').strftime('%B %Y')}**
+                        - **{calc_skew(df_hist,'Max Temp')}**
+                        """
+                        )
 
 
 st.set_page_config(page_title='Temperature', page_icon=':bar_chart:', layout='wide')
 st.text("")
 st.text("")
 
-st.markdown("<h1 style='text-align: center; color: #D81F26; font-family:Verdana'><b>🌡️ TEMPERATURE</b></h1>", unsafe_allow_html=True)
+st.title("🌡️ TEMPERATURE")
 st.text(" ")
 st.text(" ")
 
 with open('style.css')as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html = True)
 
-options = st.sidebar.selectbox(
-    "Select the Frequency for Temperature",
-    ("Daily","Monthly")
-)
+
 city_list=['Adilabad','Warangal','Karimnagar','Khammam','Nizamabad']
-city = st.sidebar.selectbox(
+city = st.selectbox(
     "Select City",
     city_list
 )
 
-if options=='Daily':
-    display_daily(city)
-else:
-    display_monthly(city)
+display_daily(city)
+
+display_monthly(city)
