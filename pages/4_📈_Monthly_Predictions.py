@@ -5,6 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import plotly.subplots as sp
 import requests
+from PIL import Image
 import json
 import codecs
 import s3fs
@@ -161,6 +162,15 @@ def load_prophet(city):
     st.plotly_chart(fig1, use_container_width=True)
 
 
+def show_geomap():
+    st.markdown("<hr>",
+                unsafe_allow_html=True)
+    st.subheader("Heatwave Occurences Count")
+    st.text("")
+    image = Image.open('images\geomap.jpg')
+    st.image(image, caption='Heatwave Frequencies for the given cities')
+
+
 def display_heatwave(city, slider_col):
     fs = s3fs.S3FileSystem(key='AKIAQOY2QI5NU7SFAHPH',
                            secret='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')
@@ -205,6 +215,7 @@ def display_heatwave(city, slider_col):
     st.subheader("Prophet Model Forecasts")
     load_prophet(city)
     display_model_details(city, weather_city, 'Weather')
+    show_geomap()
 
 
 # Config
