@@ -150,7 +150,7 @@ def display_aqi(city, slider_col):
 
 
 def load_prophet(city):
-    with open('models\{}_model.json'.format(city), 'r') as fin:
+    with open('./models/{}_model.json'.format(city), 'r') as fin:
         m = model_from_json(fin.read())
 
     fs = s3fs.S3FileSystem(key=st.secrets.aws_credentials.AWS_KEY,
@@ -167,7 +167,7 @@ def show_geomap():
                 unsafe_allow_html=True)
     st.subheader("Heatwave Occurences Count")
     st.text("")
-    image = Image.open('images\geomap.jpg')
+    image = Image.open('./images/geomap.jpg')
     st.image(image, caption='Heatwave Frequencies for the given cities')
 
 
