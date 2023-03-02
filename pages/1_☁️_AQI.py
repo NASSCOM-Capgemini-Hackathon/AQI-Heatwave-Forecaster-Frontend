@@ -125,46 +125,23 @@ def display_daily(city):
         st.subheader("Daily AQI Data Statistics")
 
         st.markdown('---')
+        res = get_statistics(df_hist, 'AQI')
+        stat = ['Minimum', 'Median', 'Maximum']
+        print_3(res, stat)
+        fig = px.histogram(
+            df_hist, x="AQI", title='AQI Distribution', marginal='box')
+        st.plotly_chart(fig, use_container_width=True)
+        min_date = df_hist.loc[df_hist['AQI'] == res[0], 'DATE'].iloc[0]
+        max_date = df_hist.loc[df_hist['AQI'] == res[2], 'DATE'].iloc[0]
+        with st.expander("**Inference**"):
 
-
-<< << << < HEAD
-res = get_statistics(df_hist, 'AQI')
-stat = ['Minimum', 'Median', 'Maximum']
-print_3(res, stat)
-fig = px.histogram(
-    df_hist, x="AQI", title='AQI Distribution', marginal='box')
-st.plotly_chart(fig, use_container_width=True)
-min_date = df_hist.loc[df_hist['AQI'] == res[0], 'DATE'].iloc[0]
-max_date = df_hist.loc[df_hist['AQI'] == res[2], 'DATE'].iloc[0]
-st.markdown(
-    f"""
-                    **Inference:**
-                    - **Minimum AQI for {city} was on {min_date}**
-                    - **Maximum AQI for {city} was on {max_date}**
-                    - **{calc_skew(df_hist,'AQI')}**
-                    """
-)
-== == == =
-res = get_statistics(df_hist, 'AQI')
-stat = ['Minimum', 'Median', 'Maximum']
-print_3(res, stat)
-fig = px.histogram(
-    df_hist, x="AQI", title='AQI Distribution', marginal='box')
-st.plotly_chart(fig, use_container_width=True)
-min_date = df_hist.loc[df_hist['AQI'] == res[0], 'DATE'].iloc[0]
-max_date = df_hist.loc[df_hist['AQI'] == res[2], 'DATE'].iloc[0]
-with st.expander("**Inference**"):
-
-    st.markdown(
-        f"""
+            st.markdown(
+                f"""
                         - **Minimum AQI for {city} was on {min_date}**
                         - **Maximum AQI for {city} was on {max_date}**
                         - **{calc_skew(df_hist,'AQI')}**
                         """
-    )
-
-
->>>>>> > 0110bcdadb0cad48f8c21e3a072d17f9260623cd
+            )
 
 
 @st.cache_data
