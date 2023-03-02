@@ -78,10 +78,10 @@ def display_model_details(city, forecast, feature):
         # calculate MAPE
         mape = np.mean(np.abs(error / actual)) * 100
         with col1:
-            st.metric('RMSE', round(rmse, 4), 0)
-            st.metric('MAE', round(mae, 4), 0)
+            st.metric('RMSE', round(rmse, 2), 0)
+            st.metric('MAE', round(mae, 2), 0)
         with col2:
-            st.metric('MAPE', round(mape, 4), 0)
+            st.metric('MAPE', round(mape, 2), 0)
             st.metric('Accuracy %', round(100-mape, 2), 0)
     st.header("MODEL EVALUATION INFERENCE")
     container1 = st.container()
