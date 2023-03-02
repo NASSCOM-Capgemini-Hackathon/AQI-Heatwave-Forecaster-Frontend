@@ -119,8 +119,8 @@ def display_aqi(city, slider_col):
                 unsafe_allow_html=True)
     st.header(city)
 
-    fs = s3fs.S3FileSystem(key='AKIAQOY2QI5NU7SFAHPH',
-                           secret='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')
+    fs = s3fs.S3FileSystem(key=st.secrets.aws_credentials.AWS_KEY,
+                           secret=st.secrets.aws_credentials.AWS_SECRET_KEY)
     with fs.open('capegemini-hackathon/predictions/aqi/{}/aqi.csv'.format(city)) as f:
         aqi_city = pd.read_csv(f, header=0)
     aqi_city = aqi_city[aqi_city['Date'] < '2024-01-01']
@@ -149,6 +149,7 @@ def display_aqi(city, slider_col):
     display_model_details(city, aqi_city, 'AQI')
 
 
+@st.cache_data
 def load_prophet(city):
     with open('./models/{}_model.json'.format(city), 'r') as fin:
         m = model_from_json(fin.read())
