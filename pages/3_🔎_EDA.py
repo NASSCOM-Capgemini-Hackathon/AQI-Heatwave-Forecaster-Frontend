@@ -105,11 +105,11 @@ st.image('images\interpolatepng.png')
 with st.expander("See explanation"):
     st.markdown(
         '''
-    Datasets used for this project is from Telangana state board pollution control board's Ambient Air data from (2016 - 2022)
+    Datasets used for this project is from Telangana state board pollution control board's Ambient Air data from (2016 - 2022) and
     AQI data (2016 - 2022).
 
     The first data processing technique used was to interpolate the missing values instead of filling the data with mean/median values.
-    we Tried different interpolating techniques to capture the missing records we ended up in _from_dervative_ method of order 5 which 
+    We tried different interpolation techniques to capture the missing records we ended up in _from_dervative_ method of order 5 which 
     construct a piecewise polynomial in the Bernstein basis to capture the missing values.
     ''')
 
@@ -152,5 +152,5 @@ st.markdown(
     '### **:blue[STEP 3 : BUILDING MODEL AND PREDICTING]**')
 st.markdown(
 '''
-From the collective information's from different graphs and interpretations we deployed different AI models suitable for different situations.
+From the collective information from different graphs and interpretations we deployed different AI models suitable for the given data.
 ''')
