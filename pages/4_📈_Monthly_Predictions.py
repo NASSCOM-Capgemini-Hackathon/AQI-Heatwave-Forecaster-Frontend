@@ -98,7 +98,7 @@ def display_model_details(city, forecast, feature):
     fig = utils.linegraph(aqi_test['Date'], aqi_test['y_test'],
                           'Actual AQI', 'Date', 'AQI', aqi_test['y_pred'], 'AQI Predicted')
     st.plotly_chart(fig, use_container_width=True)
-    with st.expander("See explanation"):
+    with st.expander("Inference"):
         st.write("""
             The chart above shows the plot of the actual and the predicted values of testing data.The red line displays the predicted values and the blue lines represent the actual value of the feature. We have taken the last 20%  of the data for testing data.
         """)
@@ -107,6 +107,10 @@ def display_model_details(city, forecast, feature):
     fig = utils.linegraph(forecast['Date'], forecast['Predictions'],
                           'AQI Forecasted', 'Date', 'AQI')
     st.plotly_chart(fig, use_container_width=True)
+    with st.expander("Inference"):
+        st.write("""
+            The chart above shows the plot of the forecasted values for the months of 2023. These values are predicted using the trained models mentioned above.
+        """)
 
 
 def display_aqi(city, slider_col):
@@ -187,9 +191,15 @@ def display_heatwave(city, slider_col):
     c1, c2 = st.columns(2, gap="large")
     with c1:
         st.subheader("Heat Wave Occurence Count")
-        st.metric(weather_city['Heatwave_Occurence'].sum())
+        st.metric('Heatwave Occurence Count',
+                  weather_city['Heatwave_Occurence'].sum(), 0)
     with c2:
-
+        st.subheader("Heat Wave Occurence Months")
+        heatwave_months = weather_city[weather_city['Heatwave_Occurence'] == True]
+        heatwave_months = heatwave_months[['Date', 'Predictions']]
+        st.table(heatwave_months)
+    st.markdown("<hr>",
+                unsafe_allow_html=True)
     get_statistics(weather_city, 'Weather')
     st.markdown("<hr>", unsafe_allow_html=True)
     st.subheader("Prophet Model Forecasts")
