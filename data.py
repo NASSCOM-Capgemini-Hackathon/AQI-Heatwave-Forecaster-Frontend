@@ -61,6 +61,8 @@ def get_data(query, city_name=None):
         df_aqi.replace('-', np.nan, inplace=True)
         df_aqi['DATE'] = pd.to_datetime(
             df_aqi['DATE'], format='%Y/%m/%d').dt.date
+        df_aqi['DATE'] = pd.to_datetime(
+            df_aqi['DATE'])
 
         for col in df_aqi.columns.to_list()[1:]:
             df_aqi[col] = df_aqi[col].astype("float64")
@@ -73,6 +75,8 @@ def get_data(query, city_name=None):
         df_weather.replace('-', np.nan, inplace=True)
         df_weather['DATE'] = pd.to_datetime(
             df_weather['DATE'], format='%Y/%m/%d').dt.date
+        df_weather['DATE'] = pd.to_datetime(
+            df_weather['DATE'])
 
         for col in df_weather.columns.to_list()[1:]:
             df_weather[col] = df_weather[col].astype("float64")

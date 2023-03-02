@@ -33,7 +33,9 @@ with main_col1:
     with col2:
         st.metric("AQI", current_aqi)
 
-    st.metric("WEATHER", current_weather)
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("WEATHER", current_weather)
 
     col1, col2 = st.columns(2)
     with col1:
@@ -49,7 +51,7 @@ with main_col2:
 
 st.markdown("___")
 st.markdown("# **:blue[Weekly Forecast Data]**")
-col1, col2, col3, col4, col5, col6, col7 = st.columns(7, gap="large")
+col1, col2, col3, col4, col5, col6, col7 = st.columns(7, gap="small")
 with col1:
     st.subheader("{}".format(forecast_dates[0]))
     st.metric("TEMPERATURE", str(
