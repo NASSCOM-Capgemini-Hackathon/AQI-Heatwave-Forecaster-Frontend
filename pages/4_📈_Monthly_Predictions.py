@@ -40,7 +40,7 @@ def get_statistics(df, feature):
 def display_model_details(city, forecast, feature):
     if feature == 'AQI':
         f = open(
-            'E:/NASSCOMM Hackathon/AQI-Heatwave-Forecaster-Frontend/descriptions/aqi/{}.json'.format(city))
+            'descriptions/aqi/{}.json'.format(city))
         model_details = json.load(f)
     else:
         f = open(
@@ -185,6 +185,11 @@ def display_heatwave(city, slider_col):
 
     st.markdown("<hr>", unsafe_allow_html=True)
     c1, c2 = st.columns(2, gap="large")
+    with c1:
+        st.subheader("Heat Wave Occurence Count")
+        st.metric(weather_city['Heatwave_Occurence'].sum())
+    with c2:
+
     get_statistics(weather_city, 'Weather')
     st.markdown("<hr>", unsafe_allow_html=True)
     st.subheader("Prophet Model Forecasts")
