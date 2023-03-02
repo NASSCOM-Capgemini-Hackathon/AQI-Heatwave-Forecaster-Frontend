@@ -43,7 +43,7 @@ def gauge_chart(value):
             'threshold': {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': value}
         },
         title={'text': "AQI levels"}))
-    fig.update_layout(font = {'color': "darkblue", 'family': "Arial"})
+    fig.update_layout(font={'color': "darkblue", 'family': "Arial"})
 
     return fig
 
@@ -112,6 +112,12 @@ def linechart_with_range_slider(X_axis, Y_axis, parameter_name, title):
                   name=parameter_name, line_color="blue"))
     fig.layout.update(title_text=title, xaxis_rangeslider_visible=True)
     return fig
+
+
+def get_initial():
+    URL = "https://aqi-heatwave-app.azurewebsites.net/api/aqi/DailyAQIPredictions/Warangal"
+    resp = requests.get(URL)
+    return
 
 
 def get_current_aqi(city):

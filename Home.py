@@ -24,7 +24,6 @@ def print_top3(df):
     col_list = list(st.columns(3, gap="medium"))
     for i in range(len(col_list)):
         with col_list[i]:
-            # print(df['Predictions'].iloc[i])
             st.metric(pd.to_datetime(df['Date'].iloc[i]).strftime(
                 '%B'), round(df['Predictions'].iloc[i], 2))
 
@@ -32,10 +31,8 @@ def print_top3(df):
 def get_statistics(df, feature):
     sorted_desc = df.sort_values('Predictions', ascending=False)
     st.header("Top 3 Months with highest {}".format(feature))
-    print_top3(sorted_desc)
     sorted_asc = df.sort_values('Predictions', ascending=True)
     st.header("Top 3 Months with lowest {}".format(feature))
-    print_top3(sorted_asc)
 
 
 def display_model_details(city, forecast, feature):
@@ -126,7 +123,6 @@ def display_aqi(city, slider_col):
     aqi_city = aqi_city[aqi_city['Date'] < '2024-01-01']
     aqi_city.rename(
         columns={'AQI_Predictions': 'Predictions'}, inplace=True)
-    print(aqi_city.head())
     st.markdown("<hr>",
                 unsafe_allow_html=True)
     st.text("")
@@ -248,7 +244,9 @@ with main_c1:
             "Select the Feature To Be Predicted",
             ("Heatwave", "AQI")
         )
+
 if options == 'AQI':
     display_aqi(city, main_c2)
 else:
     display_heatwave(city, main_c2)
+utils.get_initial()
