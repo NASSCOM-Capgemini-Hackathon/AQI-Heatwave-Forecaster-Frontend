@@ -21,7 +21,7 @@ HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KH
 
 
 def get_current_aqi(city):
-    global URL_MAPPING,HEADERS
+    global URL_MAPPING, HEADERS
     req = Request(URL_MAPPING[city], headers=HEADERS)
     html_page = urlopen(req)
     soup = BeautifulSoup(html_page, "html.parser")
@@ -71,8 +71,7 @@ def bargraph(x_data, y_data1, y_data1_name, xaxis_title, yaxis_title, y_data2=No
 def linegraph(x_data, y_data1, y_data1_name, xaxis_title, yaxis_title, y_data2=None, y_data2_name=None):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=x_data, y=y_data1, name=y_data1_name))
-
-    if y_data2 != None and y_data2_name != None:
+    if y_data2_name != None:
         fig.add_trace(go.Scatter(x=x_data, y=y_data2,
                                  name=y_data2_name, marker_color='crimson'))
     fig.update_layout(

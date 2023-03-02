@@ -37,6 +37,63 @@ def get_statistics(df, feature):
     print_top3(sorted_asc)
 
 
+models_names = {
+    'Adilabad': 'Holtz',
+    'Warangal': 'HoltWinters',
+    'Karimnagar': 'CES',
+    'Khammam': 'CES',
+    'Nizamabad': 'Prophet'
+}
+
+
+def display_model_details(city, forecast):
+    st.markdown("<hr>",
+                unsafe_allow_html=True)
+    st.header("MODEL USED")
+    st.text("")
+    st.subheader(models_names[city]+" Time Series Model")
+    st.text("")
+    fs = s3fs.S3FileSystem(key='AKIAQOY2QI5NU7SFAHPH',
+                               secret='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')
+    with fs.open('capegemini-hackathon/predictions/aqi/{}/{}_test.csv'.format(city, city)) as f:
+        aqi_test = pd.read_csv(f, header=0)
+    col1, col2 = st.columns(2, gap="large")
+    with col1:
+        st.table(aqi_test)
+    with col2:
+        st.subheader('Evaluation Metrics')
+        st.markdown("<hr>",
+                    unsafe_allow_html=True)
+        st.text("")
+        col1, col2, col3 = st.columns(3, gap="large")
+        actual = np.array(aqi_test['y_test'].tolist())
+        predicted = np.array(aqi_test['y_pred'].tolist())
+        error = actual-predicted
+        # calculate RMSE
+        rmse = np.sqrt(np.mean(error**2))
+
+        # calculate MAE
+        mae = np.mean(np.abs(error))
+
+        # calculate MAPE
+        mape = np.mean(np.abs(error / actual)) * 100
+        with col1:
+            st.metric('RMSE', round(rmse, 4), 0)
+            st.metric('MAE', round(mae, 4), 0)
+        with col2:
+            st.metric('MAPE', round(mape, 4), 0)
+            st.metric('Accuracy %', round(100-mape, 2), 0)
+    st.header("Predicted Vs Actual Values For Test set")
+    fig = utils.linegraph(aqi_test['Date'], aqi_test['y_test'],
+                          'Actual AQI', 'Date', 'AQI', aqi_test['y_pred'], 'AQI Predicted')
+    st.plotly_chart(fig, use_container_width=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
+    st.header("Forecasted Values")
+    fig = utils.linegraph(forecast['Date'], forecast['Predictions'],
+                          'AQI Forecasted', 'Date', 'AQI')
+    st.plotly_chart(fig, use_container_width=True)
+
+
 def display_aqi(city, slider_col):
     st.markdown("<hr>",
                 unsafe_allow_html=True)
@@ -46,8 +103,10 @@ def display_aqi(city, slider_col):
                            secret='I7QYItmiDAuKcrF4OsA/2JtKNA1qfthH33xZXzls')
     with fs.open('capegemini-hackathon/predictions/aqi/{}/aqi.csv'.format(city)) as f:
         aqi_city = pd.read_csv(f, header=0)
-
     aqi_city = aqi_city[aqi_city['Date'] < '2024-01-01']
+    aqi_city.rename(
+        columns={'AQI_Predictions': 'Predictions'}, inplace=True)
+    print(aqi_city.head())
     st.markdown("<hr>",
                 unsafe_allow_html=True)
     st.text("")
@@ -67,6 +126,7 @@ def display_aqi(city, slider_col):
 
     st.markdown("<hr>", unsafe_allow_html=True)
     get_statistics(aqi_city, 'AQI')
+    display_model_details(city, aqi_city)
 
 
 def load_prophet(city):
@@ -89,6 +149,8 @@ def display_heatwave(city, slider_col):
         weather_city = pd.read_csv(f, header=0)
     weather_city = weather_city[(
         weather_city['Date'] < '2024-01-01') & (weather_city['Date'] > '2022-12-01')]
+    weather_city = weather_city.assign(
+        Heatwave_Occurence=weather_city['Predictions'] > 40)
     st.markdown("<hr>",
                 unsafe_allow_html=True)
     st.text("")
