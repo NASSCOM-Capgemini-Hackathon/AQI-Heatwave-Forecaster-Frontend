@@ -101,7 +101,7 @@ st.set_page_config(page_title='Dashboard AQI & Heatwave',
 st.header("Dashboard for AQI and Heatwaves")
 
 st.markdown('### **:blue[STEP 1 : PREPROCESSING]**')
-st.image('images\interpolatepng.png')
+st.image('./images/interpolatepng.png')
 with st.expander("See explanation"):
     st.markdown(
         '''
@@ -151,6 +151,6 @@ st.markdown('___')
 st.markdown(
     '### **:blue[STEP 3 : BUILDING MODEL AND PREDICTING]**')
 st.markdown(
-'''
+    '''
 From the collective information from different graphs and interpretations we deployed different AI models suitable for the given data.
 ''')
