@@ -73,7 +73,7 @@ https://nasscom-capgemini-hackathon-aqi-heatwave-forecaster-home-o0tty0.streamli
   
 6. About Us
 
-   Displays the breief details oyr group along with our startup plan!
+   Displays the breief details of our group along with the startup plan!
   
   
  
