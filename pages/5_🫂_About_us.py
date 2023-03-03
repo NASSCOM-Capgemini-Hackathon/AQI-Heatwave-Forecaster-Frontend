@@ -12,6 +12,23 @@ st.header("ABOUT US")
 st.markdown("<hr>", unsafe_allow_html=True)
 st.header("START UP PLAN")
 st.markdown("<hr>", unsafe_allow_html=True)
+st.subheader("OUR APPLICATION'S MAJOR FEATURES")
+st.write("""
+    1. Dynamic Forecasting of AQI and Temperature Data using live data.
+    2. Using a scheduler based approach of training the models based on the live data.
+    3. Live Dashboard for each Tier 2 city in Telangana with various filters.
+    4. Real Time Capturing of Data using Web Scrapping Strategy.
+    5. Displaying our EDA and various statistical analysis and visuals showing the effectiveness and scalabilty of our predictions
+""")
+st.subheader("OUR NEXT APPROACHES TOWARDS SETTING UP OUR START UP")
+st.write("""
+    1. Our major objective of building up our startup application is towards building a an application towards our environment
+    2. So on our first approach we have a plan to capture user emails and details of people visiting our page and sending them daily alerts on the AQI and heatwave levels
+    3. We have also planned to send our forecasted values as an idea about the future days so that people can take precautionary messages accordingly.
+    4. We have also planned to create a complete dashboard by generating a lot of KPI measures and make people aware about the statistics of their places.
+    5. Maintain a good quality of the data and provide paid reliable data source endpoints to fetch the reliable data maintained. 
+""")
+st.markdown("<hr>", unsafe_allow_html=True)
 st.header("TEAM PSG DS 2K19")
 st.markdown("<hr>", unsafe_allow_html=True)
 user1_col1, padding, user1_col2 = st.columns((6, 1, 15), gap="small")
