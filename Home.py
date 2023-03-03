@@ -31,8 +31,10 @@ def print_top3(df):
 def get_statistics(df, feature):
     sorted_desc = df.sort_values('Predictions', ascending=False)
     st.header("Top 3 Months with highest {}".format(feature))
+    print_top3(sorted_desc)
     sorted_asc = df.sort_values('Predictions', ascending=True)
     st.header("Top 3 Months with lowest {}".format(feature))
+    print_top3(sorted_asc)
 
 
 def display_model_details(city, forecast, feature):
