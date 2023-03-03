@@ -56,17 +56,16 @@ user3_col1, padding, user3_col2 = st.columns((6, 1, 15), gap="small")
 with user3_col1:
     jega = Image.open('./images/jega.png')
     jega = jega.resize((400, 500))
-    st.image(jega, caption="Team Member 3 - Jegadeesh M")
+    st.image(jega, caption="Team Member 3 - Jegadeesh M S")
 with user3_col2:
-    st.header("Jegadeesh M")
-    st.write("""Hello This is Jegadeesh M, from PSG College of Technology currently pursuing my 4th year MSc Data Science course at PSG College of Technology.\n
+    st.header("Jegadeesh M S")
+    st.write("""Hello This is Jegadeesh M S, from PSG College of Technology currently pursuing my 4th year MSc Data Science course at PSG College of Technology.\n
     AREAS OF INTEREST : MACHINE LEARNING\n
     WORK EXPERIENCE   : Data Analyst Summer Intern At Buckman\n
     GITHUB PROFILE    : https://github.com/jegadeesh2001\n
     LINKEDIN URL      : https://www.linkedin.com/in/jegadeesh-manickam-9b112597/\n
-    ROLE IN HACKATHON : Developed the scheduler scripts running in AWS\n
-                        so as to get dynamic predictions taking into account\n
-                        of the current values. Developed the hourly, daily and\n
-                        monthly schedulers for this work and storing the results\n 
-                        in AWS S3 bucket.   
+    ROLE IN HACKATHON : Worked on Timeseries forecasting of AQI and\n
+                        Heatwave occurence for different cities along with the\n
+                        corresponding model evaluation. The results were then\n
+                        deployed to our streamlit application. 
     """)
