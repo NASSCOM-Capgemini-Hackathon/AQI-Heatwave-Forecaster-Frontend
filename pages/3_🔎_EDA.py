@@ -93,16 +93,11 @@ def display_heatwave(city):
     st.plotly_chart(statmodel_fig, use_container_width=True)
 
 
-# Config
-st.set_page_config(page_title='Dashboard AQI & Heatwave',
-                   page_icon='🔎', layout='wide')
-
-
 st.header("Dashboard for AQI and Heatwaves")
 
 st.markdown('### **:blue[STEP 1 : PREPROCESSING]**')
 st.image('./images/interpolatepng.png')
-with st.expander("See explanation",expanded=True):
+with st.expander("See explanation", expanded=True):
     st.markdown(
         '''
     Datasets used for this project is from Telangana state board pollution control board's Ambient Air data from (2016 - 2022) and
@@ -112,6 +107,13 @@ with st.expander("See explanation",expanded=True):
     We tried different interpolation techniques to capture the missing records we ended up in _from_dervative_ method of order 5 which 
     construct a piecewise polynomial in the Bernstein basis to capture the missing values.
     ''')
+
+# Config
+st.set_page_config(page_title='Dashboard AQI & Heatwave',
+                   page_icon='🔎', layout='wide')
+
+st.markdown("<h1 style='text-align: center; color: black;font-size:50px'>NASSCOM CAPEGEMINI HACKATHON</h1><hr>",
+            unsafe_allow_html=True)
 
 # Filter
 st.text("")

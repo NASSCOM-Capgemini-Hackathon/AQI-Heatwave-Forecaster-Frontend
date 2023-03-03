@@ -276,7 +276,10 @@ def display_heatwave(city, slider_col):
 st.set_page_config(page_title='Monthly Predictions Hackathon',
                    page_icon=':bar_chart:', layout='wide')
 
-st.title("MONTHLY PREDICTIONS")
+st.markdown("<h1 style='text-align: center; color: black;font-size:50px'>NASSCOM CAPEGEMINI HACKATHON</h1><hr>",
+            unsafe_allow_html=True)
+
+st.title("MONTHLY PREDICTIONS : HACKATHON OBJECTIVE")
 st.text(" ")
 # Style
 with open('style.css')as f:

@@ -133,7 +133,7 @@ def display_daily(city):
         st.plotly_chart(fig, use_container_width=True)
         min_date = df_hist.loc[df_hist['AQI'] == res[0], 'DATE'].iloc[0]
         max_date = df_hist.loc[df_hist['AQI'] == res[2], 'DATE'].iloc[0]
-        with st.expander("**Inference**",expanded=True):
+        with st.expander("**Inference**", expanded=True):
 
             st.markdown(
                 f"""
@@ -217,7 +217,7 @@ def display_monthly(city):
         st.plotly_chart(fig, use_container_width=True)
         min_date = df_hist.loc[df_hist['AQI'] == res[0], 'DATE'].iloc[0]
         max_date = df_hist.loc[df_hist['AQI'] == res[2], 'DATE'].iloc[0]
-        with st.expander("**Inference**",expanded=True):
+        with st.expander("**Inference**", expanded=True):
             st.markdown(
                 f"""
                         - **Minimum AQI for {city} was on {datetime.strptime(min_date,'%Y-%m-%d').strftime('%B %Y')}**
@@ -235,6 +235,9 @@ def display_monthly(city):
 
 st.set_page_config(page_title='Air Quality Index',
                    page_icon=':bar_chart:', layout='wide')
+st.markdown("<h1 style='text-align: center; color: black;font-size:50px'>NASSCOM CAPEGEMINI HACKATHON</h1><hr>",
+            unsafe_allow_html=True)
+
 st.text("")
 st.text("")
 

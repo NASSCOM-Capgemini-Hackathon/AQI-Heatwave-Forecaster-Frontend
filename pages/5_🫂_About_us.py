@@ -10,6 +10,9 @@ warnings.filterwarnings("ignore")
 
 st.set_page_config(page_title='About Us',
                    page_icon=':people_hugging:', layout='wide', initial_sidebar_state='collapsed')
+st.markdown("<h1 style='text-align: center; color: black;font-size:50px'>NASSCOM CAPEGEMINI HACKATHON</h1><hr>",
+            unsafe_allow_html=True)
+
 
 st.header("ABOUT US")
 st.markdown("<hr>", unsafe_allow_html=True)

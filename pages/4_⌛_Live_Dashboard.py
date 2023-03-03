@@ -7,6 +7,9 @@ import numpy as np
 st.set_page_config(page_title='AQI Weather Forecaster',
                    page_icon=':bar_chart:', layout='wide', initial_sidebar_state='collapsed')
 
+st.markdown("<h1 style='text-align: center; color: black;font-size:50px'>NASSCOM CAPEGEMINI HACKATHON</h1><hr>",
+            unsafe_allow_html=True)
+
 city = st.selectbox("SELECT ANY ONE OF THE CITY ", ("Adilabad",
                     "Nizamabad", "Khammam", "Warangal", "Karimnagar"))
 
