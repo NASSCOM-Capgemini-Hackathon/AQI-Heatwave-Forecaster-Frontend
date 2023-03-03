@@ -35,6 +35,7 @@ https://nasscom-capgemini-hackathon-aqi-heatwave-forecaster-home-o0tty0.streamli
 1. Home Page
 
    
+   ![chrome-capture-2023-2-3 (1)](https://user-images.githubusercontent.com/62760269/222749637-67691f0a-aba5-43fc-b55a-67dc3696d324.gif)
 
 
    Displays the monthly wise forecast for AQI and Heat wave occurence for the year of 2023 with necessary visualizations.The Best time series model for forecasting the results was based on RMSE and the description about the model chosen is provided. The evaluation metric displayed on the page is based on 25% of the data.
