@@ -9,7 +9,8 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 import warnings
 warnings.filterwarnings("ignore")
 
-
+#Config
+st.set_page_config(page_title='Dashboard AQI & Heatwave',page_icon=':magnifying_glass_tilted_left:', layout='wide')
 def display_aqi(city):
     aqi_city = get_data("dashboard-aqi", city)
 
@@ -93,6 +94,10 @@ def display_heatwave(city):
     st.plotly_chart(statmodel_fig, use_container_width=True)
 
 
+
+st.markdown("<h1 style='text-align: center; color: black;font-size:50px'>NASSCOM CAPGEMINI HACKATHON</h1><hr>",
+            unsafe_allow_html=True)
+
 st.header("Dashboard for AQI and Heatwaves")
 
 st.markdown('### **:blue[STEP 1 : PREPROCESSING]**')
@@ -103,17 +108,14 @@ with st.expander("See explanation", expanded=True):
     Datasets used for this project is from Telangana state board pollution control board's Ambient Air data from (2016 - 2022) and
     AQI data (2016 - 2022).
 
-    The first data processing technique used was to interpolate the missing values instead of filling the data with mean/median values.
-    We tried different interpolation techniques to capture the missing records we ended up in _from_dervative_ method of order 5 which 
-    construct a piecewise polynomial in the Bernstein basis to capture the missing values.
+    The first data processing technique used was to interpolate the missing values rather than imputing missing values with mean/median values.
+    We tried different interpolation techniques to capture the missing records and finally selected Bernstein polynomial method of order 5 which 
+    constructs a piecewise polynomial equation to capture the missing values.
     ''')
 
-# Config
-st.set_page_config(page_title='Dashboard AQI & Heatwave',
-                   page_icon='🔎', layout='wide')
+#
 
-st.markdown("<h1 style='text-align: center; color: black;font-size:50px'>NASSCOM CAPEGEMINI HACKATHON</h1><hr>",
-            unsafe_allow_html=True)
+
 
 # Filter
 st.text("")
