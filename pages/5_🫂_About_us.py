@@ -58,15 +58,14 @@ with user2_col2:
 with user2_col1:
     st.header("Mathana Maathav")
     st.write("""Hello This is Mathana Maathav, from PSG College of Technology currently pursuing my 4th year MSc Data Science course at PSG College of Technology.\n
-    AREAS OF INTEREST : MACHINE LEARNING\n
+    AREAS OF INTEREST : FULL STACK DATA SCIENTISTS\n
     WORK EXPERIENCE   : SDE Summer Intern At Zerodown\n
     GITHUB PROFILE    : https://github.com/mathanamathav\n
     LINKEDIN URL      : https://www.linkedin.com/in/mathana-mathav-a-s-615b65205/\n
-    ROLE IN HACKATHON : Developed the scheduler scripts running in AWS\n
-                        so as to get dynamic predictions taking into account\n
-                        of the current values. Developed the hourly, daily and\n
-                        monthly schedulers for this work and storing the results\n 
-                        in AWS S3 bucket.   
+    ROLE IN HACKATHON : Worked on data pipelines , making data source ready for \n
+                        machine learning engineer building streamlit application \n
+                        , backend flask-REST API application and \n 
+                        deployed the backend application to Azure. 
     """)
 st.markdown("<hr>", unsafe_allow_html=True)
 user3_col1, padding, user3_col2 = st.columns((6, 1, 15), gap="small")
