@@ -99,8 +99,8 @@ def display_model_details(city, forecast, feature):
         st.write(model_details['model_usage_reasoning'])
         st.text("")
     st.header("Predicted Vs Actual Values For Test set")
-    fig = utils.linegraph(aqi_test['Date'], aqi_test['y_test'],
-                          'Actual AQI', 'Date', 'AQI', aqi_test['y_pred'], 'AQI Predicted')
+    fig = utils.linegraph(df_test['Date'], df_test['y_test'],
+                          'Actual AQI', 'Date', 'AQI', df_test['y_pred'], 'AQI Predicted')
     st.plotly_chart(fig, use_container_width=True)
     with st.expander("Inference", expanded=True):
         st.write("""
