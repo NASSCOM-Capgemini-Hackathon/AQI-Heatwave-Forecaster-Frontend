@@ -38,35 +38,39 @@ def get_statistics(df, feature):
 
 
 def display_model_details(city, forecast, feature):
+    fs = s3fs.S3FileSystem(key='AKIAQOY2QI5NU7SFAHPH',
+                               secret='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')
     if feature == 'AQI':
         f = open(
             './descriptions/aqi/{}.json'.format(city))
         model_details = json.load(f)
+        with fs.open('capegemini-hackathon/predictions/aqi/{}/{}_test.csv'.format(city, city)) as f:
+            df_test = pd.read_csv(f, header=0)
+
     else:
         f = open(
             './descriptions/weather/{}.json'.format(city))
         model_details = json.load(f)
+        with fs.open('capegemini-hackathon/predictions/weather/{}/{}_test.csv'.format(city, city)) as f:
+            df_test = pd.read_csv(f, header=0)
     st.markdown("<hr>",
                 unsafe_allow_html=True)
     st.header("MODEL USED")
     st.text("")
     st.subheader(model_details["model"]+" Time Series Model")
     st.text("")
-    fs = s3fs.S3FileSystem(key='AKIAQOY2QI5NU7SFAHPH',
-                               secret='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')
-    with fs.open('capegemini-hackathon/predictions/aqi/{}/{}_test.csv'.format(city, city)) as f:
-        aqi_test = pd.read_csv(f, header=0)
+
     col1, col2 = st.columns(2, gap="large")
     with col1:
-        st.table(aqi_test)
+        st.table(df_test)
     with col2:
         st.subheader('Evaluation Metrics')
         st.markdown("<hr>",
                     unsafe_allow_html=True)
         st.text("")
         col1, col2, col3 = st.columns(3, gap="large")
-        actual = np.array(aqi_test['y_test'].tolist())
-        predicted = np.array(aqi_test['y_pred'].tolist())
+        actual = np.array(df_test['y_test'].tolist())
+        predicted = np.array(df_test['y_pred'].tolist())
         error = actual-predicted
         # calculate RMSE
         rmse = np.sqrt(np.mean(error**2))
