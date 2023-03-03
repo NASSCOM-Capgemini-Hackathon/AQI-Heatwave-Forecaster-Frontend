@@ -168,10 +168,6 @@ def display_history_and_forecasted(city, feature, forecast_df):
 
 
 def display_aqi(city, slider_col):
-    st.markdown("<hr>",
-                unsafe_allow_html=True)
-    st.header(city)
-
     fs = s3fs.S3FileSystem(key=st.secrets.aws_credentials.AWS_KEY,
                            secret=st.secrets.aws_credentials.AWS_SECRET_KEY)
     with fs.open('capegemini-hackathon/predictions/aqi/{}/aqi.csv'.format(city)) as f:
