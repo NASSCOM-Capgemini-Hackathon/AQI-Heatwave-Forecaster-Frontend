@@ -1,7 +1,15 @@
-# AQI-Heatwave-Forecaster-Frontend
+## AQI-Heatwave-Forecaster-Frontend
 
-Frotend Application for the AQI-Heatwave-Forecaster 
-Ut magna nostrud cillum minim ut duis pariatur esse reprehenderit Lorem eiusmod tempor tempor. Cupidatat excepteur mollit laboris culpa eiusmod aute culpa incididunt enim laborum occaecat. Consequat ipsum aliquip dolor occaecat amet laborum ullamco commodo irure. Commodo tempor tempor officia culpa veniam reprehenderit ipsum nisi veniam minim Lorem amet nisi aliqua. Occaecat exercitation aliqua velit cupidatat cillum ea quis enim. Elit veniam in irure in. Elit fugiat anim deserunt ipsum esse sunt.
+Frotend Application  bulit for NASSCOM Hackathon 2023 using streamlit  which aims in providing interactive application for the task of predicting AQI and Heat wave occurences in Tier-2 cities of Telenagana
+
+
+## Preview of Application
+
+![Screenshot 2023-03-03 190129](https://user-images.githubusercontent.com/62760269/222732893-fe997643-bca6-4781-b1fd-80a686ff8f63.png)
+
+## Website Link
+
+https://nasscom-capgemini-hackathon-aqi-heatwave-forecaster-home-o0tty0.streamlit.app/Live_Dashboard
 
 ## Setting Up Application
 
@@ -30,3 +38,42 @@ Ut magna nostrud cillum minim ut duis pariatur esse reprehenderit Lorem eiusmod 
 - [ ] Dashboards with city and dates filter for AQI
 EDA And Assumptions validations and graphs and colab links
 Our startup plan
+
+
+## Page Structure
+
+1. Home Page
+
+   ![chrome-capture-2023-2-3 (1)](https://user-images.githubusercontent.com/62760269/222744962-29866f57-55f0-44c9-a40d-5ce90f6caae5.gif)
+
+
+   Displays the monthly wise forecast for AQI and Heat wave occurence for the year of 2023 with necessary visualizations.The Best time series model for forecasting the results was based on RMSE and the description about the model chosen is provided. The evaluation metric displayed on the page is based on 25% of the data.
+   
+
+2. AQI
+
+   
+
+   Displays the Dynamic AQI Predictions monthly/Daily wise which is fetched from our back end API based on the model produced values returned by AWS scheduler. The page gets dynamically updated every day once the scheduler gets running. Forecasted values for the next 15 days/15 months is shown on the page with visualizations.
+  
+
+3. Temperature
+
+   Displays the Dynamic Temperature Predictions monthly/Daily wise which is fetched from our back end API based on the model produced values returned by AWS scheduler. The page gets dynamically updated every day once the scheduler gets running. Forecasted values for the next 15 days/15 months is shown on the page with visualizations.
+  
+
+4. Live Dashboard
+
+   Diplays the AQI data fetched from https://www.aqi.in/in/dashboard/india/telangana and the temperature data fetched from https://api.openweathermap.org/data/2.5/weather. The current data as well as the forecast results for the upcoming week is displayed with charts for the given city.
+
+5. EDA
+
+   The charts that support our assumptions and which has guided in model training for AQI and Heatwave data for the given city are displayed. A brief work flow regarding the modelling process of given data is also provided.
+  
+6. About Us
+
+   Displays the breief details oyr group along with our startup plan!
+  
+  
+ 
+
