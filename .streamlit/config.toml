@@ -5,6 +5,3 @@ backgroundColor="#FFFFFF"
 secondaryBackgroundColor="#BAD7E9"
 textColor="black"
 font="sans serif"
-
-AWS_KEY = "AKIAQOY2QI5NU7SFAHPH"
-AWS_SECRET_KEY = "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"

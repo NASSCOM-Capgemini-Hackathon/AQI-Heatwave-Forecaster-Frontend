@@ -98,7 +98,7 @@ def display_model_details(city, forecast, feature):
     fig = utils.linegraph(aqi_test['Date'], aqi_test['y_test'],
                           'Actual AQI', 'Date', 'AQI', aqi_test['y_pred'], 'AQI Predicted')
     st.plotly_chart(fig, use_container_width=True)
-    with st.expander("Inference",expanded=True):
+    with st.expander("Inference", expanded=True):
         st.write("""
             The chart above shows the plot of the actual and the predicted values of testing data.The red line displays the predicted values and the blue lines represent the actual value of the feature. We have taken the last 20%  of the data for testing data.
         """)
@@ -107,10 +107,60 @@ def display_model_details(city, forecast, feature):
     fig = utils.linegraph(forecast['Date'], forecast['Predictions'],
                           'AQI Forecasted', 'Date', 'AQI')
     st.plotly_chart(fig, use_container_width=True)
-    with st.expander("Inference",expanded=True):
+    with st.expander("Inference", expanded=True):
         st.write("""
             The chart above shows the plot of the forecasted values for the months of 2023. These values are predicted using the trained models mentioned above.
         """)
+
+
+def combined_linegraph(df, feature):
+    with st.container():
+        st.markdown("""---""")
+        st.header("History Data and Forecasted Values")
+        data = go.Scatter(
+            x=df["Date"],
+            y=df[feature],
+            mode='lines',
+            line={"color": "blue"},
+            name="Historical Data"
+        )
+
+        pred = go.Scatter(
+            x=df["Date"],
+            y=df["Predictions"],
+            mode='lines',
+
+            line={"color": "green"},
+            name="Forecast"
+        )
+
+        data = [data, pred]
+
+        fig = go.Figure(data=data)
+        st.plotly_chart(fig, use_container_width=True)
+
+
+def display_history_and_forecasted(city, feature, forecast_df):
+    fs = s3fs.S3FileSystem(key=st.secrets.aws_credentials.AWS_KEY,
+                           secret=st.secrets.aws_credentials.AWS_SECRET_KEY)
+    if feature == 'AQI':
+        with fs.open('s3://capegemini-hackathon/data/aqi/dataset/aqi-dataset.xlsx') as f:
+            history_city = pd.read_excel(f, sheet_name=city, header=0)
+        history_city = history_city.rename(columns={'DATE': 'Date'})
+        forecast_df['Date'] = pd.to_datetime(forecast_df['Date'])
+        df_res = pd.merge(history_city, forecast_df, on='Date', how='outer')
+        combined_linegraph(df_res, 'AQI')
+        with st.expander("Inference", expanded=True):
+            st.write("""
+                The chart above shows the plot of the historical data of AQI values and the forecasted values for the 12 months of 2023. The blue color line shows the historical data and the green line shows the forecasted values
+            """)
+    else:
+        with fs.open('s3://capegemini-hackathon/data/weather/dataset/weather-monthly-dataset.xlsx') as f:
+            history_city = pd.read_excel(f, sheet_name=city, header=0)
+        forecast_df['Date'] = pd.to_datetime(forecast_df['Date'])
+        history_city['Date'] = pd.to_datetime(history_city['Date'])
+        df_res = pd.merge(history_city, forecast_df, on='Date', how='outer')
+        combined_linegraph(df_res, 'Max Temp (°C)')
 
 
 def display_aqi(city, slider_col):
@@ -145,6 +195,7 @@ def display_aqi(city, slider_col):
     st.markdown("<hr>", unsafe_allow_html=True)
     get_statistics(aqi_city, 'AQI')
     display_model_details(city, aqi_city, 'AQI')
+    display_history_and_forecasted(city, 'AQI', aqi_city)
 
 
 @st.cache_data
@@ -188,8 +239,12 @@ def display_heatwave(city, slider_col):
     weather_city = weather_city[(weather_city['Date'] >=
                                  start_month) & (weather_city['Date'] <= end_month)]
     col1, col2 = st.columns(2, gap="medium")
+    weather_city['Month'] = pd.to_datetime(weather_city['Date']).apply(
+        lambda x: x.strftime('%B'))
     with col1:
-        st.table(weather_city)
+        weather_city['Heatwave'] = weather_city['Heatwave_Occurence'].apply(
+            lambda x: 'Yes' if x else 'No')
+        st.table(weather_city[['Date', 'Predictions', 'Heatwave']])
     with col2:
         st.subheader('{} Monthly Predictions'.format(city))
         fig = utils.linegraph(weather_city['Date'],
@@ -205,7 +260,7 @@ def display_heatwave(city, slider_col):
     with c2:
         st.subheader("Heat Wave Occurence Months")
         heatwave_months = weather_city[weather_city['Heatwave_Occurence'] == True]
-        heatwave_months = heatwave_months[['Date', 'Predictions']]
+        heatwave_months = heatwave_months[['Month', 'Predictions']]
         st.table(heatwave_months)
     st.markdown("<hr>",
                 unsafe_allow_html=True)
