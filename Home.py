@@ -233,7 +233,7 @@ with open('style.css')as f:
 main_c1, main_c2 = st.columns(2, gap="medium")
 
 with main_c1:
-    col1, col2 = st.columns(2, gap="large")
+    col1, col2 = st.columns(2, gap="medium")
     city_list = ['Warangal', 'Karimnagar', 'Khammam', 'Nizamabad', 'Adilabad']
     with col1:
         city = st.selectbox(
