@@ -115,7 +115,7 @@ def display_daily(city):
         st.plotly_chart(fig,use_container_width=True)
         min_date=df_hist.loc[df_hist['Max Temp']==res[0],'DATE'].iloc[0]
         max_date=df_hist.loc[df_hist['Max Temp']==res[2],'DATE'].iloc[0]
-        with st.expander("**Inference**"):
+        with st.expander("**Inference**",expanded=True):
 
             st.markdown(
                         f"""
@@ -206,7 +206,7 @@ def display_monthly(city):
         st.plotly_chart(fig,use_container_width=True)
         min_date=df_hist.loc[df_hist['Max Temp']==res[0],'Date'].iloc[0]
         max_date=df_hist.loc[df_hist['Max Temp']==res[2],'Date'].iloc[0]
-        with st.expander("**Inference**"):
+        with st.expander("**Inference**",expanded=True):
         
             st.markdown(
                         f"""

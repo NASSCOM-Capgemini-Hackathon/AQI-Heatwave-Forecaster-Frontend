@@ -102,7 +102,7 @@ st.header("Dashboard for AQI and Heatwaves")
 
 st.markdown('### **:blue[STEP 1 : PREPROCESSING]**')
 st.image('./images/interpolatepng.png')
-with st.expander("See explanation"):
+with st.expander("See explanation",expanded=True):
     st.markdown(
         '''
     Datasets used for this project is from Telangana state board pollution control board's Ambient Air data from (2016 - 2022) and
