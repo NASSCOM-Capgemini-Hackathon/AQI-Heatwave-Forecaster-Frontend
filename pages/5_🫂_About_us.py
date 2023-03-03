@@ -61,10 +61,10 @@ user2_col1, padding, user2_col2 = st.columns((15, 1, 6), gap="small")
 with user2_col2:
     jega = Image.open('./images/mathan.jpg')
     jega = jega.resize((400, 500))
-    st.image(jega, caption="Team Member 2 - Mathana Maathav")
+    st.image(jega, caption="Team Member 2 - Mathana Mathav")
 with user2_col1:
-    st.header("Mathana Maathav")
-    st.write("""Hello This is Mathana Maathav, from PSG College of Technology currently pursuing my 4th year MSc Data Science course at PSG College of Technology.\n
+    st.header("Mathana Mathav")
+    st.write("""Hello This is Mathana Mathav, from PSG College of Technology currently pursuing my 4th year MSc Data Science course at PSG College of Technology.\n
     AREAS OF INTEREST : FULL STACK DATA SCIENTISTS\n
     WORK EXPERIENCE   : SDE Summer Intern At Zerodown\n
     GITHUB PROFILE    : https://github.com/mathanamathav\n
