@@ -10,7 +10,7 @@ warnings.filterwarnings("ignore")
 
 st.set_page_config(page_title='About Us',
                    page_icon=':people_hugging:', layout='wide', initial_sidebar_state='collapsed')
-st.markdown("<h1 style='text-align: center; color: black;font-size:50px'>NASSCOM CAPEGEMINI HACKATHON</h1><hr>",
+st.markdown("<h1 style='text-align: center; color: black;font-size:50px'>NASSCOM CAPGEMINI HACKATHON</h1><hr>",
             unsafe_allow_html=True)
 
 st.header("START UP PLAN")
@@ -20,7 +20,7 @@ st.write("""
     1. Dynamic Forecasting of AQI and Temperature Data using live data.
     2. Using a scheduler based approach of training the models based on the live data.
     3. Live Dashboard for each Tier 2 city in Telangana with various filters.
-    4. Real Time Capturing of Data using Web Scrapping Strategy.
+    4. Real Time Capturing of Data using Web Scraping Strategy.
     5. Displaying our EDA and various statistical analysis and visuals showing the effectiveness and scalabilty of our predictions
 """)
 st.subheader("OUR NEXT APPROACHES TOWARDS SETTING UP OUR START UP")
@@ -61,10 +61,10 @@ user2_col1, padding, user2_col2 = st.columns((15, 1, 6), gap="small")
 with user2_col2:
     jega = Image.open('./images/mathan.jpg')
     jega = jega.resize((400, 500))
-    st.image(jega, caption="Team Member 2 - Mathana Maathav")
+    st.image(jega, caption="Team Member 2 - Mathana Mathav")
 with user2_col1:
-    st.header("Mathana Maathav")
-    st.write("""Hello This is Mathana Maathav, from PSG College of Technology currently pursuing my 4th year MSc Data Science course at PSG College of Technology.\n
+    st.header("Mathana Mathav")
+    st.write("""Hello This is Mathana Mathav, from PSG College of Technology currently pursuing my 4th year MSc Data Science course at PSG College of Technology.\n
     AREAS OF INTEREST : FULL STACK DATA SCIENTISTS\n
     WORK EXPERIENCE   : SDE Summer Intern At Zerodown\n
     GITHUB PROFILE    : https://github.com/mathanamathav\n
