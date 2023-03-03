@@ -8,6 +8,9 @@ from datetime import date
 import warnings
 warnings.filterwarnings("ignore")
 
+st.set_page_config(page_title='About Us',
+                   page_icon=':people_hugging:', layout='wide', initial_sidebar_state='collapsed')
+
 st.header("ABOUT US")
 st.markdown("<hr>", unsafe_allow_html=True)
 st.header("START UP PLAN")
