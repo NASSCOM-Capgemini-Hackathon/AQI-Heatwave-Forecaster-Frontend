@@ -9,7 +9,7 @@ import streamlit as st
 # Data Sources
 # @st.cache(ttl=1000, allow_output_mutation=True)
 
-@st.cache_data
+@st.cache_data(ttl=60*60*3)
 def get_data(query, city_name=None):
     if query == 'Transactions Overview':
         return pd.read_json('https://node-api.flipsidecrypto.com/api/v2/queries/579714e6-986e-421a-85dd-c32a8b41b25c/data/latest')
